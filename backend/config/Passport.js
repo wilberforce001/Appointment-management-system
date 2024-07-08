@@ -1,12 +1,11 @@
-// Configuration for setting up authentication using the local strategy 
-const LocalStrategy = require('passport-local').Strategy; // Strategy used for loacl authentication (i.e., using a username and password)
-const User = require('./User');
+import LocalStrategy from 'passport-local';
+import User from '../models/User.js';
 
-module.exports = function (passport) {
+export default function (passport) {
     passport.use(
         new LocalStrategy({ usernameField: 'email' }, async (email, password, done) => {
             try {
-                const user = await User.findOne({ email });
+                const user = await findOne({ email });
                 if (!user) {
                     return done(null, false, { message: 'Invalid credentials' });
                 }
@@ -29,7 +28,7 @@ module.exports = function (passport) {
     });
 
     passport.deserializeUser((id, done) => {
-        User.findById(id, (err, user) => {
+        findById(id, (err, user) => {
             done(err, user);
         });
     });

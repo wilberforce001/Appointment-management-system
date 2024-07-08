@@ -1,6 +1,6 @@
 // Import Mongoose package, an Object Data Modeling (ODM) 
 // library for MongoDB and Node.js
-const mongoose = require('mongoose'); 
+import mongoose from 'mongoose'; 
 
 //Asynchronous function that establishes a coonection to MongoDB database
 const connectDB = async () => {
@@ -16,4 +16,4 @@ const connectDB = async () => {
     }
 };
 
-module.exports = connectDB;
+export default connectDB;

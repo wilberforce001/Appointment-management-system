@@ -1,11 +1,11 @@
-const express = require('express');
+import express from 'express';
+import passport from 'passport';
+import User from '../models/User.js'; // Updated path
+
 const router = express.Router();
-const passport = require('passport');
-const User = require('../User');
 
-
-//Register 
-router.post('/register', async(req, res) => {
+// Register
+router.post('/register', async (req, res) => {
     const { name, email, password } = req.body;
     try {
         let user = await User.findOne({ email });
@@ -45,4 +45,11 @@ router.post('/login', (req, res, next) => {
     })(req, res, next);
 });
 
-module.exports = router;
+export function ensureAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    res.status(401).json({ msg: 'Unauthorized' });
+}
+
+export default router; 

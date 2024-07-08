@@ -1,12 +1,14 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const passport = require('passport');
-const session = require('express-session');
-const bodyParser = require('body-parser');
-const connectDB = require('./MongoDB');
-const User = require('./User');
-const authRoutes = require('./router/auth');
-require('dotenv').config();
+import express from 'express';
+import mongoose from 'mongoose';
+import passport from 'passport';
+import session from 'express-session';
+import bodyParser from 'body-parser';
+import connectDB from './MongoDB.js';
+import User from './models/User.js';
+import authRoutes from './config/auth.js';
+import appointmentRoutes from './router/Appointments.js';
+import dotenv from 'dotenv';
+dotenv.config();
 
 // Connect to the database
 connectDB();
@@ -17,6 +19,9 @@ const app = express();
 // Body Parser Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// Use Routes
+app.use('/appointments', appointmentRoutes);
 
 // Express Session
 app.use(
@@ -32,7 +37,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Passport config
-require('./Passport')(passport);
+import configurePassport from './config/Passport.js';
+configurePassport(passport);
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -41,4 +47,4 @@ app.use('/api/auth', authRoutes);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
-})
+});

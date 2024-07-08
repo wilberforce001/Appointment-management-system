@@ -1,11 +1,14 @@
 // Import dependencies: mongoose for interacting with
 // MongoDB and bcryptjs for hashing passwords
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
+import mongoose from 'mongoose';
+import bcryptjs from 'bcryptjs';
+
+const { Schema, model } = mongoose;
+const { genSalt, hash, compare } = bcryptjs;
 
 // User schema that defines the stracture of user documents
 // in the MongoDB collection
-const UserSchema = new mongoose.Schema({
+const UserSchema = new Schema({
     username: {
         type: String,
         required: true,
@@ -30,8 +33,8 @@ const UserSchema = new mongoose.Schema({
 UserSchema.pre('save', async function (next) {
     if (!this.isModified('password'))return next();
     try {
-        const salt = await bcrypt.genSalt(10);
-        this.password = await bcrypt.hash(this.password, salt);
+        const salt = await genSalt(10);
+        this.password = await hash(this.password, salt);
         next();
     } catch (err) {
         next(err);
@@ -40,9 +43,9 @@ UserSchema.pre('save', async function (next) {
 
 // Password comparison method
 UserSchema.methods.matchPassword = async function (enteredPassword) {
-    return await bcrypt.compare(enteredPassword, this.password);
+    return await compare(enteredPassword, this.password);
 };
 
 // Create and export the User Model
-const User = mongoose.model('User', UserSchema);
-module.exports = User;
+const User = model('User', UserSchema);
+export default User;

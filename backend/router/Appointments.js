@@ -1,7 +1,8 @@
-const express = require('express');
+import express from 'express';
+import Appointment from '../models/AppointmentData.js';
+import { ensureAuthenticated } from '../config/auth.js';
+
 const router = express.Router();
-const Appointment = require('./AppointmentData');
-const { ensureAuthenticated } = require('../router/auth');
 
 // Create a new appointment
 router.post('/create', ensureAuthenticated, async (req, res) => {
@@ -16,14 +17,14 @@ router.post('/create', ensureAuthenticated, async (req, res) => {
         await newAppointment.save();
         res.status(201).json(newAppointment);
     } catch (err) {
-        res.status(500).json({ error:err.message });
+        res.status(500).json({ error: err.message });
     }
 });
 
 // Get all appointments for the logged-in user
 router.get('/', ensureAuthenticated, async (req, res) => {
     try {
-        const appointments = await Appointment.find({ customer: req.user._id }).sort({ date: 1, time: 1 });
+        const appointments = await find({ customer: req.user._id }).sort({ date: 1, time: 1 });
         res.status(200).json(appointments);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -33,7 +34,7 @@ router.get('/', ensureAuthenticated, async (req, res) => {
 // Get a specific appointment
 router.get('/:id', ensureAuthenticated, async (req, res) => {
     try {
-        const appointment = await Appointment.findById(req.params.id);
+        const appointment = await findById(req.params.id);
         if (!appointment) {
             return res.status(404).json({ error: 'Appointment not found' });
         }
@@ -49,7 +50,7 @@ router.get('/:id', ensureAuthenticated, async (req, res) => {
 // Update appointment status
 router.put('/:id', ensureAuthenticated, async (req, res) => {
     try {
-        const appointment = await Appointment.findById(req.params.id);
+        const appointment = await findById(req.params.id);
         if (!appointment) {
             return res.status(404).json({ error: 'Appointment not found' });
         }
@@ -57,7 +58,7 @@ router.put('/:id', ensureAuthenticated, async (req, res) => {
             return res.status(401).json({ error: 'Unauthorized' });
         }
         appointment.status = req.body.status || appointment.status;
-        appointment.updateAt = Date.now();
+        appointment.updatedAt = Date.now();
         await appointment.save();
         res.status(200).json(appointment);
     } catch (err) {
@@ -68,7 +69,7 @@ router.put('/:id', ensureAuthenticated, async (req, res) => {
 // Delete an appointment
 router.delete('/:id', ensureAuthenticated, async (req, res) => {
     try {
-        const appointment = await Appointment.findById(req, params.id);
+        const appointment = await findById(req.params.id);
         if (!appointment) {
             return res.status(404).json({ error: 'Appointment not found' });
         }
@@ -82,4 +83,4 @@ router.delete('/:id', ensureAuthenticated, async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;
