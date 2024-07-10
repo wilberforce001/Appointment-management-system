@@ -34,6 +34,12 @@ The basic setup of the backend was implemented with Express, MongoDB and Passpor
 ***vue create frontend:*** Create new Vue project(frontend)  
 ***cd frontend: npm run serve*** - start the developement server
 
+**Installed Tailwind CSS for purposes of styling**  
+***npm install -D tailwindcss postcss autoprefixe:*** to install Tailwind CSS and its dependencies.  
+***npx tailwindcss init -p:*** Initialize Tailwind CSS
+
+
+
 
 
 
