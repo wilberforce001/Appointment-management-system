@@ -1,15 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Login from '@/components/Login.vue'
-import Register from '@/components/Register.vue'
-import Dashboard from '@/components/Dashboard.vue'
-import Calender from '@/components/Calender.vue'
-import { component } from 'vue/types/umd'
+import UserLogin from '@/components/UserLogin.vue'
+import UserRegister from '@/components/UserRegister.vue'
+import AdminDashboard from '@/components/AdminDashboard.vue'
+import AppointmentCalender from '@/components/AppointmentCalender.vue'
 
 const routes = [
-    { path: '/login', component: Login },
-    { path: '/register', component: Register },
-    { path: '/dashboard', component: Dashboard },
-    { path: '/calender', component: Calender },
+    { path: '/', component: UserLogin },
+    { path: '/register', component: UserRegister},
+    { path: '/dashboard', component: AdminDashboard },
+    { path: '/calender', component: AppointmentCalender },
 ]
 
 const router = createRouter({
