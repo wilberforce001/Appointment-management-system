@@ -20,7 +20,9 @@
 </template>
 
 <script>
+
 export default {
+  name: 'UserLogin',
   data() {
     return {
       email: '',
