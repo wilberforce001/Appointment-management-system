@@ -1,4 +1,4 @@
-<template>
+<template> 
   <div>
     <div class="flex items-center justify-center min-h-screen bg-gray-100">
         <div class="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
@@ -30,8 +30,28 @@ export default {
     }
   },
   methods: {
-    handleLogin() {
-      // Handle login logic
+    async handleLogin() {
+      try {
+        const response = await fetch('http://localhost:5000/api/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            email: this.email,
+            password: this.password
+          })
+        });
+        const data = await response.json();
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+          this.$router.push('/calendar');
+        } else {
+          alert('Login failed');
+        }
+      } catch (error) {
+        console.error('Error logging in:', error);
+      }
     }
   }
 }
