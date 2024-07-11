@@ -33,8 +33,41 @@
       }
     },
     methods: {
-      handleRegister() {
-        // Handle register logic
+      async handleRegister() {
+        try {
+          // Validate client-side input before making the request
+          if (!this.username || !this.email || !this.password) {
+            alert('Please fill in all fields');
+            return;
+          }
+          const response = await fetch('http://localhost:5000/api/register', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              username: this.username,
+              email: this.email,
+              password: this.password
+            })
+          });
+          const data = await response.json();
+
+          if (!response.ok) {
+            // Log the error response for debugging
+            console.error('Error response:', data);
+            alert('Registration failed: ' + (data.message || 'Unknown error'));
+            return;
+          }
+          if (data.token) {
+            localStorage.setItem('token', data.token);
+            this.$router.push('/calendar');
+          } else {
+            alert('Registration failed');
+          }
+        } catch (error) {
+          console.error('Error registering:', error);
+        }
       }
     }
   }
