@@ -10,6 +10,7 @@
   import dayGridPlugin from '@fullcalendar/daygrid';
   import interactionPlugin from '@fullcalendar/interaction';
   
+  
   export default {
     components: { FullCalendar }, 
     data() {
@@ -18,13 +19,9 @@
           plugins: [ dayGridPlugin, interactionPlugin ],
           initialView: 'dayGridMonth',
           dateClick: this.handleDateClick,
-          events: [
-          { title: 'Event 1', start: '2024-07-10' },
-          { title: 'Event 2', start: '2024-07-12' }
-        ]
-        }
-    
-      }
+          events: '/api/appointments',
+        }   
+      };
     },
     methods: {
       handledateClick: function(arg) {
