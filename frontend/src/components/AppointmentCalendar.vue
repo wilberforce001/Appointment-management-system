@@ -1,7 +1,9 @@
 <template> 
-    <div>
-      <h1 class="text-2xl font-bold">Calendar</h1>
-      <FullCalendar :options="calendarOptions"/>
+    <div class="p-4 bg-white shadow-md rounded-lg max-w-4xl mx-auto my-8">
+      <h1 class="text-2xl font-bold mb-4">Calendar</h1>
+      <div class="p-4" bg-gray-100 rounded-lg>
+        <FullCalendar :options="calendarOptions" class="max-h-[80vh] overflow-auto"/> 
+      </div>
     </div>
   </template>
   

@@ -1,57 +1,34 @@
 <template>
-  <div class="dashboard">
-    <h2>Appointment Dashboard</h2>
-    <div v-for="appointment in appointments" :key="appointment.id" class="appointment">
-      <p>{{ appointment.date }} - {{ appointment.time }}</p>
-      <p>{{ appointment.customer }}</p>
-      <p>Status: {{ appointment.status }}</p>
-      <button @click="updateStatus(appointment.id, 'confirmed')">Confirm</button>
-      <button @click="updateStatus(appointment.id, 'cancelled')">Cancel</button>
-    </div>
+  <div class="dashboard bg-gray-100 min-h-screen py-8 px-4">
+    <h1 class="text-2xl font-bold mb-4">Welcome, {{ userName }}!</h1>
+    <nav class="flex gap-4">
+      <router-link class="text-blue-600 hover:underline" to="/profile">Profile</router-link>
+      <router-link class="text-blue-600 hover:underline" to="/appointments">Appointments</router-link>
+      <router-link class="text-blue-600 hover:underline" to="/AppointmentCalendar">Calendar</router-link>
+      <button @click="logout" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Logout</button>
+    </nav>
+    <router-view></router-view>
   </div>
-</template> 
+</template>
 
 <script>
 export default {
+  name: "AdminDashboard",
   data() {
     return {
-      appointments: []
+      userName: "User's Name" // This should be fetched from the logged-in user's data
     };
   },
-  async mounted() {
-    await this.fetchAppointments();
-  },
   methods: {
-    async fetchAppointments() {
-      try {
-        const response = await fetch('http://localhost:5000/appointments');
-        const data = await response.json();
-        this.appointments = data;
-      } catch (error) {
-        console.error('Error:', error);
-      }
-    },
-    async updateStatus(id, status) {
-      try {
-        const response = await fetch(`http://localhost:5000/appointments/${id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ status })
-        });
-        const data = await response.json();
-        if (data.success) {
-          await this.fetchAppointments(); // Refresh the list
-        }
-      } catch (error) {
-        console.error('Error:', error);
-      }
+    logout() {
+      // Implement logout functionality
+      // Redirect to login page after logout
+      this.$router.push('/login');
     }
   }
-};   
+};
 </script>
 
 <style scoped>
-/* Add any custom styles here */
+/* No need to add additional styles if using Tailwind classes directly */
 </style>

@@ -47,7 +47,7 @@ export default {
         const data = await response.json();
         if (data.token) {
           localStorage.setItem('token', data.token);
-          this.$router.push('/calendar');
+          this.$router.push('/AppointmentCalendar');
         } else {
           alert('Login failed');
         }
