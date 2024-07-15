@@ -45,14 +45,18 @@ export default {
           })
         });
         const data = await response.json();
+        console.log('Login response data:', data);
         if (data.token) {
+          console.log('User data:', data.user);
           localStorage.setItem('token', data.token);
-          this.$router.push('/AppointmentCalendar');
+          localStorage.setItem('user', JSON.stringify(data.user));
+          this.$router.push('/AdminDashboard');
         } else {
-          alert('Login failed');
+          alert('Login failed: ' + (data.message || 'Unknown error'));
         }
       } catch (error) {
         console.error('Error logging in:', error);
+        alert('An error occured while logging in. Please try again.')
       }
     }
   }
