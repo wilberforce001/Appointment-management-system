@@ -124,8 +124,51 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
+// Create Apointment Endpoint
+router.post('/api/appointments', async (req, res) => {
+    try {
+        const { date, time, userId } = req.body;
+        const appointment = new Appointment({ date, time, userId });
+        await appointment.save();
+        res.status(201).send('Appointment booked');
+    } catch (error) {
+        console.error('Error booking appointment:', error);
+        res.status(500).send('Server error');
+    }
+});
+
+// GET /api/appointments
+router.get('/api/appointments', async (req, res) => {
+    try {
+      const appointments = await Appointment.find();
+      res.status(200).json(appointments);
+    } catch (error) {
+      console.error('Error fetching appointments:', error);
+      res.status(500).send('Server error');
+    }
+  });
+
+
+// PUT /api/appointments/:id
+router.put('/api/appointments/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { status } = req.body;
+      const appointment = await Appointment.findByIdAndUpdate(id, { status }, { new: true });
+      if (!appointment) {
+        return res.status(404).send('Appointment not found');
+      }
+      res.status(200).send('Appointment status updated');
+    } catch (error) {
+      console.error('Error updating appointment status:', error);
+      res.status(500).send('Server error');
+    }
+  });
+
 // Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
+
+module.exports = router;
