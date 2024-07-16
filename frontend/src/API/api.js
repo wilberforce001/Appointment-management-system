@@ -9,7 +9,7 @@ const api = axios.create({
 });
 
 export const updateUserProfile = (user) => {
-  return api.put('/components/UserProfile', user); 
+  return api.put('/api/user/profile', user); 
 };
 
 export default api;

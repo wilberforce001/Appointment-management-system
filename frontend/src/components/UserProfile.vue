@@ -31,12 +31,13 @@
 </template>
 
 <script>
-import { updateUserProfile } from '@/API/api'; 
+import { updateUserProfile } from '@/API/api'; // Adjust the import path as needed
 
 export default {
   data() {
     return {
       user: {
+        id: '', // Add id field
         name: '',
         email: '',
         phone: ''
@@ -52,6 +53,7 @@ export default {
       // Example fetch implementation
       // Replace with your actual API call to fetch user data
       this.user = {
+        id: 'user_id_here', // Replace with actual user id
         name: 'John Doe',
         email: 'john.doe@example.com',
         phone: '123-456-7890'
