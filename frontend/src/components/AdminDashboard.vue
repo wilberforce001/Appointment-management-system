@@ -6,13 +6,19 @@
         <h1 class="text-xl font-bold mb-5 mt-20">Welcome, {{ userName }}!</h1>
         <ul class="space-y-6">
           <li>
-            <router-link class="block text-blue-600 hover:underline" to="/UserProfile">Profile</router-link>
+            <router-link :to="{ name: 'UserProfile' }" @click.native="setActivePage('Profile')" :class="{'text-blue-600 hover:underline': activePage === 'Profile'}">Profile</router-link>
           </li>
           <li>
-            <router-link class="block text-blue-600 hover:underline" to="/ClientAppointments">Appointments</router-link>
+            <router-link :to="{ name: 'ClientAppointments' }" @click.native="setActivePage('Appointments')" :class="{'text-blue-600 hover:underline': activePage === 'Appointments'}">Appointments</router-link>
           </li>
           <li>
-            <router-link class="block text-blue-600 hover:underline" to="/AppointmentCalendar">Calendar</router-link>
+            <router-link :to="{ name: 'AppointmentCalendar' }" @click.native="setActivePage('Calendar')" :class="{'text-blue-600 hover:underline': activePage === 'Calendar'}">Calendar</router-link>
+          </li>
+          <li>
+            <router-link :to="{ name: 'AppointmentBooking' }" @click.native="setActivePage('Booking')" :class="{'text-blue-600 hover:underline': activePage === 'Booking'}">Booking</router-link>
+          </li>
+          <li>
+            <router-link :to="{ name: 'ManageAppointments' }" @click.native="setActivePage('Manage Appointments')" :class="{'text-blue-600 hover:underline': activePage === 'Manage Appointments'}">Manage Appointments</router-link>
           </li>
           <li>
             <button @click="logout" class="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Logout</button>
@@ -40,27 +46,26 @@ export default {
   name: 'AdminDashboard',
   data() {
     return {
-      userName: '', // This should be fetched from the logged-in user's data
+      userName: '', // Fetch from user session
       isSidebarOpen: false,
       activePage: ''
     };
   },
   methods: {
     fetchUserName() {
-      // Fetch the user's name from the backend or local storage
+      // Fetch username from session or API
       const user = localStorage.getItem('user');
       if (user) {
         try {
           const parsedUser = JSON.parse(user);
-          console.log('Parsed user data:', parsedUser);
           if (parsedUser && parsedUser.username) {
             this.userName = parsedUser.username;
           } else {
-            console.error('User data is missing the name property');
+            console.error('User data is missing the username property');
             this.$router.push('/');
           }
         } catch (e) {
-          console.error('Failed to parse data:', e);
+          console.error('Failed to parse user data:', e);
           this.$router.push('/');
         }
       } else {
@@ -69,7 +74,7 @@ export default {
       }
     },
     logout() {
-      // Clear user session data
+      // Clear session data and redirect to login
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       this.$router.push('/');
@@ -79,7 +84,9 @@ export default {
     },
     setActivePage(page) {
       this.activePage = page;
-      this.isSidebarOpen = true;
+      if (!this.isSidebarOpen) {
+        this.isSidebarOpen = true; // Open sidebar when selecting a page
+      }
     }
   },
   created() {

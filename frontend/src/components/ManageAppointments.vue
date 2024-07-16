@@ -1,4 +1,4 @@
-<template>
+<template> 
     <div>
       <h2>Manage Appointments</h2>
       <table>
@@ -12,8 +12,8 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="appointment in appointments" :key="appointment.id">
-            <td>{{ appointment.date }}</td>
+          <tr v-for="appointment in appointments" :key="appointment._id">
+            <td>{{ appointment.date }}</td> 
             <td>{{ appointment.time }}</td>
             <td>{{ appointment.customerName }}</td>
             <td>{{ appointment.status }}</td>
@@ -28,6 +28,8 @@
   </template>
   
   <script>
+  import axios from 'axios';
+  
   export default {
     data() {
       return {
@@ -38,28 +40,27 @@
       this.fetchAppointments();
     },
     methods: {
-      fetchAppointments() {
-        // Fetch appointments from the server
-        this.$axios.get('/api/appointments')
-          .then(response => {
-            this.appointments = response.data;
-          })
-          .catch(error => {
-            console.error('Error fetching appointments:', error);
-          });
+      async fetchAppointments() {
+        try {
+          const response = await axios.get('/api/appointments');
+          this.appointments = response.data;
+        } catch (error) {
+          console.error('Error fetching appointments:', error);
+        }
       },
-      updateStatus(appointment, status) {
-        // Update appointment status on the server
-        this.$axios.put(`/api/appointments/${appointment.id}`, { status })
-          .then(response => {
-            appointment.status = status;
-            alert('Appointment status updated successfully!');
-          })
-          .catch(error => {
-            console.error('Error updating appointment status:', error);
-          });
+      async updateStatus(appointment, status) {
+        try {
+          await axios.put(`/api/appointments/${appointment._id}`, { status }); 
+          appointment.status = status; // Update the status locally
+        } catch (error) {
+          console.error('Error updating appointment status:', error);
+        }
       },
     },
-  };
+  }; 
   </script>
+  
+  <style scoped>
+  /* your styles here */
+  </style>
   

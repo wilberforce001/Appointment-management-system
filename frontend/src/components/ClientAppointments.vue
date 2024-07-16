@@ -1,6 +1,6 @@
 <template>
-    <div>
-      <h2>Appointments Page</h2>
+    <div> 
+      <h2>Appointments Page</h2> 
     </div>
   </template>
   

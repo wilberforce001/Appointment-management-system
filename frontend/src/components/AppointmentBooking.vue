@@ -1,7 +1,7 @@
 <template>
     <div>
       <h2>Book an Appointment</h2>
-      <form @submit.prevent="bookAppointment">
+      <form @submit.prevent="bookAppointment"> 
         <div>
           <label for="date">Date:</label>
           <input type="date" v-model="appointmentDate" required />
@@ -16,6 +16,8 @@
   </template>
   
   <script>
+  import axios from 'axios'; // Import axios here
+  
   export default {
     data() {
       return {
@@ -24,22 +26,18 @@
       };
     },
     methods: {
-      bookAppointment() {
-        // Send appointment data to the server
-        const appointment = {
-          date: this.appointmentDate,
-          time: this.appointmentTime,
-          userId: this.$store.state.user.id, // Assuming you have Vuex setup
-        };
-  
-        this.$axios.post('/api/appointments', appointment)
-          .then(response => {
-            alert('Appointment booked successfully!');
-            // Optionally, redirect or update UI
-          })
-          .catch(error => {
-            console.error('Error booking appointment:', error);
+      async bookAppointment() {
+        try {
+          await axios.post('/api/appointments', {
+            service: 'Your service here', // Replace with actual service data
+            date: this.appointmentDate,
+            time: this.appointmentTime,
           });
+          alert('Appointment booked successfully!');
+        } catch (error) {
+          console.error('Error booking appointment:', error);
+          alert('Failed to book appointment. Please try again.');
+        }
       },
     },
   };
