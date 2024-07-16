@@ -1,66 +1,55 @@
-<template> 
-    <div>
-      <h2>Manage Appointments</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Customer</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="appointment in appointments" :key="appointment._id">
-            <td>{{ appointment.date }}</td> 
-            <td>{{ appointment.time }}</td>
-            <td>{{ appointment.customerName }}</td>
-            <td>{{ appointment.status }}</td>
-            <td>
-              <button @click="updateStatus(appointment, 'confirmed')">Confirm</button>
-              <button @click="updateStatus(appointment, 'cancelled')">Cancel</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+<template>
+  <div class="bg-white shadow-md rounded-lg p-4">
+    <h2 class="text-lg font-semibold mb-4">Appointments</h2>
+    <div v-if="appointments.length === 0" class="text-gray-500">No appointments found.</div>
+    <div v-else>
+      <ul class="divide-y divide-gray-200">
+        <li v-for="appointment in appointments" :key="appointment.id" class="py-2">
+          <div class="flex justify-between items-center">
+            <div>
+              <span class="text-gray-700">{{ appointment.customerName }}</span>
+              <span class="text-sm text-gray-500 ml-2">{{ formatDate(appointment.date) }}</span>
+            </div>
+            <div class="flex space-x-2">
+              <button @click="confirmAppointment(appointment)" class="bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded-md">Confirm</button>
+              <button @click="rescheduleAppointment(appointment)" class="bg-yellow-500 hover:bg-yellow-600 text-white py-1 px-3 rounded-md">Reschedule</button>
+              <button @click="cancelAppointment(appointment)" class="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-md">Cancel</button>
+            </div>
+          </div>
+        </li>
+      </ul>
     </div>
-  </template>
-  
-  <script>
-  import axios from 'axios';
-  
-  export default {
-    data() {
-      return {
-        appointments: [],
-      };
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      appointments: [] // Initialize with fetched appointments
+    };
+  },
+  methods: {
+    formatDate(date) {
+      // Implement date formatting as needed
+      return new Date(date).toLocaleDateString();
     },
-    mounted() {
-      this.fetchAppointments();
+    confirmAppointment(appointment) {
+      // Placeholder logic for confirming appointment
+      console.log('Confirm appointment:', appointment);
     },
-    methods: {
-      async fetchAppointments() {
-        try {
-          const response = await axios.get('/api/appointments');
-          this.appointments = response.data;
-        } catch (error) {
-          console.error('Error fetching appointments:', error);
-        }
-      },
-      async updateStatus(appointment, status) {
-        try {
-          await axios.put(`/api/appointments/${appointment._id}`, { status }); 
-          appointment.status = status; // Update the status locally
-        } catch (error) {
-          console.error('Error updating appointment status:', error);
-        }
-      },
+    rescheduleAppointment(appointment) {
+      // Placeholder logic for rescheduling appointment
+      console.log('Reschedule appointment:', appointment);
     },
-  }; 
-  </script>
-  
-  <style scoped>
-  /* your styles here */
-  </style>
-  
+    cancelAppointment(appointment) {
+      // Placeholder logic for canceling appointment
+      console.log('Cancel appointment:', appointment);
+    }
+  }
+};
+</script>
+
+<style scoped>
+/* Tailwind CSS classes can be used directly */
+</style>
