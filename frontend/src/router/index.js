@@ -5,8 +5,8 @@ import AdminDashboard from '@/components/AdminDashboard.vue'
 import AppointmentCalendar from '@/components/AppointmentCalendar.vue'
 import UserProfile from '@/components/UserProfile.vue'
 import ClientAppointments from '@/components/ClientAppointments.vue'
-import AppointmentBooking from '@/components/AppointmentBooking.vue';
 import ManageAppointments from '@/components/ManageAppointments.vue';
+import AppointmentStatus from '@/components/AppointmentStatus.vue';
 
 const routes = [
     { path: '/', name: 'Home', component: UserHome }, 
@@ -15,8 +15,8 @@ const routes = [
     { path: '/UserRegister', name: 'UserRegister', component: UserRegister},
     { path: '/AdminDashboard', name: 'AdminDashboard', component: AdminDashboard },
     { path: '/AppointmentCalendar', name: 'AppointmentCalendar', component: AppointmentCalendar },
-    { path: '/AppointmentBooking', name: 'AppointmentBooking', component: AppointmentBooking },
     { path: '/ManageAppointments', name: 'ManageAppointments', component: ManageAppointments },
+    { path: '/AppointmentStatus', name: 'AppointmentStatus', component: AppointmentStatus },
 ];
 
 const router = createRouter({

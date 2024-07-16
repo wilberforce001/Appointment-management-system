@@ -6,19 +6,19 @@
         <h1 class="text-xl font-bold mb-5 mt-20">Welcome, {{ userName }}!</h1>
         <ul class="space-y-6">
           <li>
-            <router-link :to="{ name: 'UserProfile' }" @click.native="setActivePage('Profile')" :class="{'text-blue-600 hover:underline': activePage === 'Profile'}">Profile</router-link>
+            <router-link :to="{ name: 'UserProfile' }" @click.native="setActivePage('Profile')" class="text-blue-600 hover:underline">Profile</router-link>
           </li>
           <li>
-            <router-link :to="{ name: 'ClientAppointments' }" @click.native="setActivePage('Appointments')" :class="{'text-blue-600 hover:underline': activePage === 'Appointments'}">Appointments</router-link>
+            <router-link :to="{ name: 'ClientAppointments' }" @click.native="setActivePage('Book Appointment')" class="text-blue-600 hover:underline">Book Appointment</router-link>
           </li>
           <li>
-            <router-link :to="{ name: 'AppointmentCalendar' }" @click.native="setActivePage('Calendar')" :class="{'text-blue-600 hover:underline': activePage === 'Calendar'}">Calendar</router-link>
+            <router-link :to="{ name: 'AppointmentCalendar' }" @click.native="setActivePage('Calendar')" class="text-blue-600 hover:underline">Calendar</router-link>
           </li>
           <li>
-            <router-link :to="{ name: 'AppointmentBooking' }" @click.native="setActivePage('Booking')" :class="{'text-blue-600 hover:underline': activePage === 'Booking'}">Booking</router-link>
+            <router-link :to="{ name: 'ManageAppointments' }" @click.native="setActivePage('Manage Appointments')" class="text-blue-600 hover:underline">Manage Appointments</router-link>
           </li>
           <li>
-            <router-link :to="{ name: 'ManageAppointments' }" @click.native="setActivePage('Manage Appointments')" :class="{'text-blue-600 hover:underline': activePage === 'Manage Appointments'}">Manage Appointments</router-link>
+            <router-link :to="{ name: 'AppointmentStatus' }" @click.native="setActivePage('Appointment Status')" class="text-blue-600 hover:underline">Appointment Status</router-link>
           </li>
           <li>
             <button @click="logout" class="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Logout</button>
@@ -95,17 +95,3 @@ export default {
 };
 </script>
 
-<style scoped>
-/* Sidebar Animation */
-nav {
-  transition: transform 0.3s ease;
-}
-
-.translate-x-0 {
-  transform: translateX(0);
-}
-
-.-translate-x-full {
-  transform: translateX(-100%);
-}
-</style>
