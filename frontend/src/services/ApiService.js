@@ -12,8 +12,8 @@ export default {
   getAppointments(config = {}) {
     return apiClient.get('/appointments', config);
   },
-  createAppointment(appointment) {
-    return apiClient.post('/appointments', appointment);
+  createAppointment(appointment, config = {}) {
+    return apiClient.post('/appointments', appointment, config);
   },
   registerUser(user) {
     return apiClient.post('/users/register', user);
