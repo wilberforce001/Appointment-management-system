@@ -43,6 +43,24 @@ Vue Router was used for navigation between components: Login.vue, Register.vue, 
 ***npm install vue-router@4:*** to install Vue Router
 Configured Vue Router
 
+**Home page**  
+Setup UserHome which is the landing page of the application with a welcome message, login input and a link to rigister a new visitor.
+
+**Navigation to the Dashboard**  
+Once a user is logged in, they are redirected to the dashboard which has navigation links to different parts of the application. 
+
+**Checking User details in the Database - MongoDB**  
+***use appointment-system***: to connect to the Database  
+***db.users.find().pretty()***: to query the Users collection 
+***db.users.deleteMany({})***: to delete all documents in the users collection  
+***db.users.dropIndex('username_1')***: remove an index in MongoDB database  
+***db.users.getIndexes()***: check indexes in MongoDB database  
+***db.users.find({ email: null })***: verify that no documents with null values in fields like email are left in your collection.  
+***db.users.deleteMany({ email: null })***: clean up any documents with `null` values for required fields. 
+
+
+
+
 
 
 

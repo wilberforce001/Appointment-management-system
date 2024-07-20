@@ -13,6 +13,7 @@
     "@fullcalendar/daygrid": "^6.1.14",
     "@fullcalendar/interaction": "^6.1.14",
     "@fullcalendar/vue3": "^6.1.14",
+    "axios": "^1.7.2",
     "core-js": "^3.8.3",
     "vue": "^3.4.31",
     "vue-router": "^4.4.0"
