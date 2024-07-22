@@ -1,7 +1,7 @@
 import express from 'express';
 import Appointment from '../models/AppointmentDetails.js';
 import authMiddleware from '../middleware/authMiddleware.js';
-import { getAppointments, updateAppointment, updateAppointmentStatus } from '../controllers/appointmentController.js';
+import { getAppointments, updateAppointment, updateAppointmentStatus, deleteAppointment } from '../controllers/appointmentController.js';
 
 const router = express.Router();
 
@@ -30,5 +30,8 @@ router.put('/:id', authMiddleware, updateAppointment);
 
 // Update appointment status
 router.patch('/appointments/:id/status', authMiddleware, updateAppointmentStatus);
+
+// Cancel appointment
+router.delete('/:id', authMiddleware, deleteAppointment);
 
 export default router;

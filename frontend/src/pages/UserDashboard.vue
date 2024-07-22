@@ -120,13 +120,16 @@ export default {
     async fetchAppointments() {
       try {
         const token = localStorage.getItem('token');
+        if (!token) {
+          throw new Error('No token found');
+        }
         const response = await ApiService.getAppointments({
           headers: { Authorization: `Bearer ${token}` },
         });
         this.appointments = response.data;
       } catch (error) {
         console.error('Fetch appointments failed:', error.response ? error.response.data : error.message);
-      }
+      } 
     },
     async cancelAppointment(appointmentId) {
       try {

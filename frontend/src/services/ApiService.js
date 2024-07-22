@@ -15,12 +15,12 @@ export default {
   createAppointment(appointment, config = {}) {
     return apiClient.post('/appointments', appointment, config);
   },
-  deleteAppointment(appointmentId, config = {}) {
-    return apiClient.delete(`/appointments/${appointmentId}`, config);
-  },
   updateAppointment(appointmentId, updatedData, config = {}) {
     return apiClient.put(`/appointments/${appointmentId}`, updatedData, config);
   },
+  deleteAppointment(appointmentId, config = {}) {
+    return apiClient.delete(`/appointments/${appointmentId}`, config);
+  },  
   registerUser(user) {
     return apiClient.post('/users/register', user);
   },

@@ -86,6 +86,17 @@
           console.error('Fetch appointments failed:', error.response.data);
         }
       },
+      async deleteAppointment(id) {
+        try {
+          const token = localStorage.getItem('token');
+          await ApiService.deleteAppointment(id, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          this.appointments = this.appointments.filter(a => a._id !==id)
+        } catch (error) {
+          console.error('Cancel appointment failed:', error.response.data);
+        }
+      }
     },
   };
   </script>
