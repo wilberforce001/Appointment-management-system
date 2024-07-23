@@ -1,9 +1,10 @@
 <template>
   <div class="p-4 bg-gray-100 min-h-screen">
     <h2 class="text-2xl font-bold mb-4 text-gray-800">User Dashboard</h2>
+    <button @click="logout" class="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600">Logout</button>
     
     <!-- Create Appointment Form -->
-    <form @submit.prevent="createAppointment" class="space-y-4 bg-white p-6 rounded-lg shadow-md mb-6">
+    <form @submit.prevent="createAppointment" class="space-y-4 bg-white p-6 rounded-lg shadow-md mb-6"> 
       <input
         v-model="newAppointment.title"
         type="text"
@@ -168,6 +169,10 @@ export default {
 closeModal() {
   this.showRescheduleModal = false;
 },
+logout() {
+  localStorage.removeItem('token');
+  this.$router.push('/login');
+}
   },
-};
+}; 
 </script>
