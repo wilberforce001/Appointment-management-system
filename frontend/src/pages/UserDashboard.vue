@@ -50,8 +50,8 @@
     </ul>
 
     <!-- Reschedule Modal -->
-    <div v-if="showRescheduleModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
-      <div class="bg-white p-6 rounded-lg shadow-lg">
+    <div v-if="showRescheduleModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center" @click="closeModal">
+      <div class="bg-white p-6 rounded-lg shadow-lg0" @click.stop>
         <h3 class="text-lg font-bold mb-4">Reschedule Appointment</h3>
         <form @submit.prevent="submitReschedule">
           <input
@@ -164,7 +164,10 @@ export default {
   } catch (error) {
     console.error('Reschedule appointment failed:', error.response ? error.response.data : error.message);
   }
-}
+},
+closeModal() {
+  this.showRescheduleModal = false;
+},
   },
 };
 </script>
