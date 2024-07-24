@@ -6,14 +6,13 @@ import jwt from 'jsonwebtoken';
 export const registerUser = async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    const role = req.body.role || 'user';
-
+    
     const user = new User({
       firstName: req.body.firstName,
       secondName: req.body.secondName,
       email: req.body.email,
       password: hashedPassword,
-      role,
+      role: req.body.role || 'user',
     });
 
     const newUser = await user.save();
@@ -37,7 +36,9 @@ export const loginUser = async (req, res) => {
       return res.status(400).json({ message: 'Invalid email or password' });
     }
 
-    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET, { expiresIn: '1h' });
     res.json({ token, userId: user._id, role: user.role });
   } catch (err) {
     res.status(500).json({ message: err.message });

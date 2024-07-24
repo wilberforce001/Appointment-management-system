@@ -113,6 +113,7 @@
 import ApiService from '../services/ApiService.js';
 
 export default {
+  name: 'UserDashboard',
   data() {
     return {
       newAppointment: {

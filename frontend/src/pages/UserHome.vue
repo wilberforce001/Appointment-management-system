@@ -1,4 +1,3 @@
-<!-- Home.vue -->
 <template>
   <div class="min-h-screen flex items-center justify-center bg-gray-100">
     <div class="max-w-md w-full bg-white p-8 rounded shadow-lg">
@@ -34,36 +33,33 @@
     </div>
   </div>
 </template>
-  
-  <script>
-  import ApiService from '../services/ApiService';
 
-  export default {
-    name: 'UserHome',
-    data() {
-        return {
-            email: '',
-            password: '',
-            errorMessage: '',
-        };
+<script>
+import ApiService from '../services/ApiService';
+
+export default {
+  name: 'UserHome',
+  data() {
+    return {
+      email: '',
+      password: '',
+      errorMessage: '',
+    };
+  },
+  methods: {
+    async login() {
+      try {
+        const response = await ApiService.loginUser({ email: this.email, password: this.password });
+        console.log('Login successful', response.data);
+        // Save the token and role, then redirect to the respective dashboard
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('role', response.data.role);
+        this.$router.push(response.data.role === 'admin' ? '/AdminDashboard' : '/UserDashboard');
+      } catch (error) {
+        console.error('Login failed', error);
+        this.errorMessage = 'Login failed. Please check your email and password';
+      }
     },
-    methods: {
-        async login() {
-            try  {
-            const response = await ApiService.loginUser({ email: this.email, password: this.password });
-            console.log('Login successful', response.data); 
-            // Save the token and redirect to the dashboard or another page
-            localStorage.setItem('token', response.data.token);
-            localStorage.setItem('role', response.data.role);
-            this.$router.push(response.data.role === 'admin' ? '/admin-dashboard' : '/UserDashboard');
-            } catch (error) {
-                console.error('Login failed', error);
-                this.errorMessage ='Login failed. Please check your email and password'
-        }
-      },
-    },
-  };
-  </script>
-  
-  
-  
+  },
+};
+</script>
