@@ -58,6 +58,9 @@ Once a user is logged in, they are redirected to the dashboard which has navigat
 ***db.users.find({ email: null })***: verify that no documents with null values in fields like email are left in your collection.  
 ***db.users.deleteMany({ email: null })***: clean up any documents with `null` values for required fields. 
 
+**Admin Dashboard**
+Updated User.js to include role attributes, updated the registration endpoint to allow role setting in user registration and updated login component to handle and update route guards accordingly.
+
 
 
 

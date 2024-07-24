@@ -54,7 +54,8 @@
             console.log('Login successful', response.data); 
             // Save the token and redirect to the dashboard or another page
             localStorage.setItem('token', response.data.token);
-            this.$router.push('/UserDashboard');
+            localStorage.setItem('role', response.data.role);
+            this.$router.push(response.data.role === 'admin' ? '/admin-dashboard' : '/UserDashboard');
             } catch (error) {
                 console.error('Login failed', error);
                 this.errorMessage ='Login failed. Please check your email and password'
