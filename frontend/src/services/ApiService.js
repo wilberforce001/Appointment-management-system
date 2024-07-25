@@ -8,6 +8,18 @@ const apiClient = axios.create({
   },
 });
 
+// Add a request interceptor for the inclusion of the token in the headers
+apiClient.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
 export default {
   getAppointments(config = {}) {
     return apiClient.get('/appointments', config);
@@ -26,5 +38,8 @@ export default {
   },
   loginUser(credentials) {
     return apiClient.post('/users/login', credentials);
+  },
+  updateAppointmentStatus(appointmentId, status, config = {}) {
+    return apiClient.put(`/appointments/${appointmentId}/status`, { status }, config);
   },
 };

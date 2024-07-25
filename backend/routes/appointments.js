@@ -29,7 +29,7 @@ router.get('/', authenticateToken, getAppointments);
 router.put('/:id', authenticateToken, updateAppointment);
 
 // Update appointment status
-router.patch('/appointments/:id/status', authenticateToken, updateAppointmentStatus);
+router.put('/:id/status', authenticateToken, updateAppointmentStatus);
 
 // Cancel appointment
 router.delete('/:id', authenticateToken, deleteAppointment);
