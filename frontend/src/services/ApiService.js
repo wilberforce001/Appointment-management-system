@@ -41,5 +41,6 @@ export default {
   },
   updateAppointmentStatus(appointmentId, status, config = {}) {
     return apiClient.put(`/appointments/${appointmentId}/status`, { status }, config);
-  },
+  }
+  
 };

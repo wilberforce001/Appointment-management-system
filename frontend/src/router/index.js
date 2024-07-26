@@ -4,6 +4,7 @@ import UserRegister from '@/pages/UserRegister.vue';
 import UserDashboard from '@/pages/UserDashboard.vue';
 import AdminDashboard from '@/pages/AdminDashboard.vue';
 import NotFoundPage from '@/pages/NotFoundPage.vue';
+import AppointmentCalendar from '@/pages/AppointmentCalendar.vue';
 
 const routes = [
   { path: '/', name: 'UserHome', component: UserHome },
@@ -11,6 +12,7 @@ const routes = [
   { path: '/UserRegister', name: 'UserRegister', component: UserRegister },
   { path: '/UserDashboard', name: 'UserDashboard', component: UserDashboard, meta: { requiresAuth: true, requiresUser: true } },
   { path: '/AdminDashboard', name: 'AdminDashboard', component: AdminDashboard, meta: { requiresAuth: true, requiresAdmin: true } },
+  { path: '/AppointmentCalendar', name: 'AppointmentCalendar', component: AppointmentCalendar },
   { path: '/:catchAll(.*)', name: 'NotFound', component: NotFoundPage },
 ];
 
