@@ -21,6 +21,21 @@ apiClient.interceptors.request.use(
 );
 
 export default {
+  registerUser(user) {
+    return apiClient.post('/users/register', user);
+  },
+  loginUser(credentials) {
+    return apiClient.post('/users/login', credentials);
+  },
+  loginWithGoogle() {
+    window.location.href = `${apiClient.defaults.baseURL}/auth/google`;
+  },
+  sendReminder(reminder) {
+    return apiClient.post('/sendReminder', reminder);
+  },
+  getReminders() {
+    return apiClient.get('/reminders');
+  },
   getAppointments(config = {}) {
     return apiClient.get('/appointments', config);
   },
@@ -33,12 +48,6 @@ export default {
   deleteAppointment(appointmentId, config = {}) {
     return apiClient.delete(`/appointments/${appointmentId}`, config);
   },  
-  registerUser(user) {
-    return apiClient.post('/users/register', user);
-  },
-  loginUser(credentials) {
-    return apiClient.post('/users/login', credentials);
-  },
   updateAppointmentStatus(appointmentId, status, config = {}) {
     return apiClient.put(`/appointments/${appointmentId}/status`, { status }, config);
   }
