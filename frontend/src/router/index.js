@@ -5,6 +5,8 @@ import UserDashboard from '@/pages/UserDashboard.vue';
 import AdminDashboard from '@/pages/AdminDashboard.vue';
 import NotFoundPage from '@/pages/NotFoundPage.vue';
 import AppointmentCalendar from '@/pages/AppointmentCalendar.vue';
+import ScheduledAppointments from '@/booking/ScheduledAppointments.vue';
+import BookAppointment from '@/booking/BookAppointment.vue';
 
 const routes = [
   { path: '/', name: 'UserHome', component: UserHome },
@@ -12,7 +14,9 @@ const routes = [
   { path: '/UserRegister', name: 'UserRegister', component: UserRegister },
   { path: '/UserDashboard', name: 'UserDashboard', component: UserDashboard, meta: { requiresAuth: true, requiresUser: true } },
   { path: '/AdminDashboard', name: 'AdminDashboard', component: AdminDashboard, meta: { requiresAuth: true, requiresAdmin: true } },
-  { path: '/AppointmentCalendar', name: 'AppointmentCalendar', component: AppointmentCalendar },
+  { path: '/BookAppointment', name: 'BookAppointment', component: BookAppointment },
+  { path: '/ScheduledAppointments', name: 'ScheduledAppointments', component: ScheduledAppointments },
+  { path: '/AppointmentCalendar', name: 'AppointmentCalendar', component: AppointmentCalendar, meta: { requiresAuth: true } },
   { path: '/:catchAll(.*)', name: 'NotFound', component: NotFoundPage },
 ];
 
@@ -36,6 +40,19 @@ router.beforeEach((to, from, next) => {
     next('/AdminDashboard');
   } else {
     next();
+  }
+});
+
+router.afterEach((to) => {
+  const token = localStorage.getItem('token');
+  const role = localStorage.getItem('role');
+
+  if (to.path === '/login' && token) {
+    if (role === 'admin') {
+      router.push('/AdminDashboard');
+    } else if (role === 'user') {
+      router.push('/UserDashboard');
+    }
   }
 });
 
