@@ -22,6 +22,34 @@ router.post('/', authenticateToken, async (req, res) => {
   }
 });
 
+// Get available time slots 
+router.get('/appointments/available', async (req, res) => {
+  try {
+    const appointments = await Appointment.find({ status: 'available' })
+    res.json(appointments)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+});
+
+// Book an appointment
+router.post('/book/:id', async (req, res) => {
+  try {
+    const appointment = await Appointment.findById(req.params.id)
+    if (!appointment) {
+      return res.status(404).json({ message: 'Appointment not found' })
+    }
+
+    appointment.status = 'booked'
+    appointment.userId = req.body.userId
+    await appointment.save()
+
+    res.json({ message: 'Appointment booked successfully' })
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
 // Get all appointments for a user
 router.get('/', authenticateToken, getAppointments);
 

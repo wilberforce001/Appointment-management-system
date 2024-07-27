@@ -7,6 +7,7 @@ const userSchema = new Schema({
   password: { type: String, required: true },
   date: { type: Date, default: Date.now },
   role: { type: String, required: true, enum: ['user', 'admin'], default: 'user' },
+  googleId: { type: String },
 });
 
 const User = model('User', userSchema); 
