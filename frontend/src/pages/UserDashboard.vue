@@ -1,13 +1,10 @@
 <template>
   <div class="flex min-h-screen bg-gray-100 relative">
-    <!-- Sidebar Toggle Button -->
     <button @click="toggleSidebar" class="toggle-button">
       ☰
     </button>
 
-    <!-- Sidebar and Main Content Container -->
     <div class="flex flex-1">
-      <!-- Sidebar -->
       <div :class="['sidebar bg-sky-500 text-white shadow-md transition-transform duration-300', { 'translate-x-0': isSidebarOpen, '-translate-x-full': !isSidebarOpen }]">
         <div class="p-4 flex items-center">
           <h2 class="text-2xl font-bold">Dashboard</h2>
@@ -31,9 +28,7 @@
         </div>
       </div>
 
-      <!-- Main Content -->
       <div class="flex-1 transition-transform duration-300" :class="{ 'ml-64': isSidebarOpen }">
-        <!-- Create Appointment Form -->
         <form @submit.prevent="createAppointment" class="space-y-4 bg-white p-6 rounded-lg shadow-md mb-6 w-3/4 mx-auto">
           <input
             v-model="newAppointment.title"
@@ -59,7 +54,7 @@
           />
           <button
             type="submit"
-            class="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            class="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             Create Appointment
           </button>
@@ -108,7 +103,6 @@
   </div>
 </template>
 
-
 <script>
 import ApiService from '../services/ApiService.js';
 
@@ -150,7 +144,7 @@ export default {
       try {
         const token = localStorage.getItem('token');
         const response = await ApiService.createAppointment(this.newAppointment, {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${token}`},
         });
         this.appointments.push(response.data);
         this.newAppointment = { title: '', description: '', date: '' };
@@ -165,7 +159,7 @@ export default {
           throw new Error('No token found');
         }
         const response = await ApiService.getAppointments({
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${token}`},
         });
         this.appointments = response.data;
       } catch (error) {
@@ -176,7 +170,7 @@ export default {
       try {
         const token = localStorage.getItem('token');
         await ApiService.deleteAppointment(appointmentId, {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${token}`},
         });
         this.appointments = this.appointments.filter(appointment => appointment._id !== appointmentId);
         if (this.selectedAppointment && this.selectedAppointment._id === appointmentId) {
@@ -230,86 +224,48 @@ export default {
 </script>
 
 <style scoped>
-/* Sidebar Styles */
+.toggle-button {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 10;
+  background-color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+.toggle-button:hover {
+  background-color: #f0f0f0;
+}
 .sidebar {
-  width: 16rem; /* Width of the sidebar */
+  width: 16rem;
+  height: 100vh;
   position: fixed;
   top: 0;
   left: 0;
-  bottom: 0;
-  z-index: 10; /* Sidebar should be above other content */
-  transition: transform 0.3s ease;
-  display: flex;
-  flex-direction: column;
+  padding-top: 4rem;
+  background-color: #1f2937;
+  transition: transform 0.3s ease-in-out;
 }
-
-/* Sidebar transition classes */
-.translate-x-0 {
-  transform: translateX(0);
+.sidebar a {
+  color: white;
+  display: block;
+  padding: 1rem;
+  text-decoration: none;
 }
-
-.-translate-x-full {
-  transform: translateX(-100%);
+.sidebar a:hover {
+  background-color: #374151;
 }
-
-/* Toggle Button Styles */
-.toggle-button {
-  position: fixed;
-  top: 1rem;
-  left: 1rem;
-  z-index: 50; /* Button should be above everything */
-  padding: 0.5rem;
-  font-size: 1.5rem;
-  color: #1d4ed8;
-  background-color: white;
-  border: none;
-  border-radius: 0.375rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
+.form-container {
+  max-width: 600px;
+  margin: auto;
+  padding: 20px;
 }
-
-.toggle-button:hover {
-  background-color: #e2e8f0;
+.form-container input,
+.form-container textarea,
+.form-container button {
+  width: 100%;
+  margin-bottom: 10px;
 }
-
-/* Main Content Styles */
-.flex-1 {
-  flex: 1;
-}
-
-.ml-64 {
-  margin-left: 16rem; /* Adjust according to sidebar width */
-}
-
-/* Modal Styles */
-.fixed {
-  position: fixed; /* Ensure modal is fixed on screen */
-  z-index: 100; /* Modal should be above the sidebar */
-}
-
-/* Specific styling for the User Dashboard text */
-.sidebar h2 {
-  margin-top: 4rem;
-  margin-bottom: 0rem; 
-  }
-
-/*Appointment Details Styles */
-.appointment-details {
-  z-index: 50; /* Ensure appointment details are above the sidebar */
-}
-
-.appointments-heading {
-  margin-left: 1rem;
-}
-
 </style>
-
-
-
-
-
-
-
-
-
-

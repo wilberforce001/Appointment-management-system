@@ -41,6 +41,18 @@
         >
           Register
         </button>
+      
+        <!-- Social Register Buttons -->
+      <div class="flex flex-col space-y-4 mb-6">
+        <button @click="registerWithGoogle" class="w-full bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+          Register with Google
+        </button>
+      </div>
+      <div class="flex flex-col space-y-4 mb-6">
+        <button @click="registerWithFacebook" class="w-full bg-sky-500 text-white px-4 py-2 rounded hover:bg-sky-600">
+          Register with Facebook
+        </button>
+      </div>
       </form>
       <p v-if="errorMessage" class="mt-4 text-red-500">{{ errorMessage }}</p>
       <p class="mt-4 text-center">
@@ -77,12 +89,18 @@ export default {
           role: this.role, // Include the role in the registration data
         });
         console.log('Registration successful', response.data);
-        this.$router.push('/login');
+        this.$router.push('login');
       } catch (error) {
         console.error('Registration failed', error);
         this.errorMessage = 'Registration failed. Please try again.';
       }
     },
+    registerWithGoogle() {
+      window.location.href = 'http://localhost:5000/auth/google'; 
+    },
+    registerWithFacebook() {
+      window.location.href = 'http://localhost:5000/auth/facebook';
+    }
   },
 };
 </script>

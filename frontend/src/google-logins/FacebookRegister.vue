@@ -1,7 +1,7 @@
 <template>
-    <div class="login"> 
-      <h2>Login</h2>
-      <button @click="loginWithFacebook">Login with Facebook</button>
+    <div class="register">
+      <h2>Register</h2>
+      <button @click="registerWithFacebook">Register with Facebook</button>
     </div>
   </template>
   
@@ -10,8 +10,8 @@
   
   export default {
     methods: {
-      loginWithFacebook() {
-        ApiService.loginWithFacebook();
+      registerWithFacebook() {
+        ApiService.registerWithFacebook();
       },
     },
   };
