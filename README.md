@@ -64,6 +64,23 @@ Updated User.js to include role attributes, updated the registration endpoint to
 
 
 
+src/
+├── Pages/
+│   ├── UserHome.vue
+│   ├── UserRegister.vue
+│   ├── UserDashboard.vue
+│   ├── UserAdmin.vue
+│   ├── BookAppointment.vue
+│   ├── ScheduleAppointment.vue
+├── views/
+│   ├── UserHome.vue
+│   ├── Dashboard.vue
+├── router/
+│   └── index.js
+├── store/
+│   └── index.js
+├── App.vue
+└── main.js
 
 
 

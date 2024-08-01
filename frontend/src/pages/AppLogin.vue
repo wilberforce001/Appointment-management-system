@@ -55,23 +55,33 @@ export default {
     };
   },
   methods: {
-    async login() {
-      try {
-        const response = await ApiService.loginUser({ email: this.email, password: this.password });
-        console.log('Login successful', response.data);
-        localStorage.setItem('token', response.data.token);
-        localStorage.setItem('role', response.data.role);
-        this.isLoggedIn = true;
-        this.$router.push(response.data.role === 'admin' ? '/AdminDashboard' : '/UserDashboard');
-      } catch (error) {
-        console.error('Login failed', error);
-        this.errorMessage = 'Login failed. Please check your email and password';
+  async login() {
+    try {
+      const response = await ApiService.loginUser({ email: this.email, password: this.password });
+      console.log('Login successful', response.data);
+
+      // Store token and role in localStorage
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('role', response.data.role);
+
+      // Set login state
+      this.isLoggedIn = true;
+
+      // Redirect based on the role
+      if (response.data.role === 'admin') {
+        this.$router.push('/AdminDashboard'); 
+      } else {
+        this.$router.push('/UserDashboard');
       }
-    },
-    loginWithGoogle() {
+    } catch (error) {
+      console.error('Login failed', error);
+      this.errorMessage = 'Login failed. Please check your email and password';
+    }
+  },
+  loginWithGoogle() {
       window.location.href = 'http://localhost:5000/auth/google'; 
     },
-    loginWithFacebook() {
+  loginWithFacebook() {
       window.location.href = 'http://localhost:5000/auth/facebook';
     }
   },
@@ -80,3 +90,5 @@ export default {
   }
 };
 </script>
+
+

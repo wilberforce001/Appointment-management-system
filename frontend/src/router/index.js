@@ -5,10 +5,9 @@ import AppointmentDashboard from '../views/AppointmentDashboard.vue';
 import UserDashboard from '../pages/UserDashboard.vue';
 import AdminDashboard from '../pages/AdminDashboard.vue';
 import AppointmentCalendar from '../pages/AppointmentCalendar.vue';
-import BookAppointment from '../booking/BookAppointment.vue';
-import ScheduledAppointments from '../booking/ScheduledAppointments.vue';
 import AppNavigation from '../pages/AppNavigation.vue';
 import UserRegister from '../pages/UserRegister.vue';
+
 
 const routes = [
   {
@@ -37,16 +36,6 @@ const routes = [
     component: AppointmentCalendar,
   },
   {
-    path: '/BookAppointment',
-    name: 'BookAppointment',
-    component: BookAppointment,
-  },
-  {
-    path: '/ScheduledAppointments',
-    name: 'ScheduledAppointments',
-    component: ScheduledAppointments,
-  },
-  {
     path: '/AppointmentDashboard',
     name: 'AppointmentDashboard',
     component: AppointmentDashboard,
@@ -66,6 +55,17 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
+});
+
+
+// Navigation Guard
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = localStorage.getItem('token');
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    next({ name: 'Login' }); // Redirect to login if not authenticated
+  } else {
+    next();
+  }
 });
 
 export default router;

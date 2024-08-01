@@ -5,8 +5,6 @@
     <router-link to="/AdminDashboard" v-if="isLoggedIn && isAdmin" class="hover:underline">Admin Dashboard</router-link> 
     <router-link to="/UserDashboard" v-if="isLoggedIn && isUser" class="hover:underline">User Dashboard</router-link>
     <router-link to="/AppointmentCalendar" v-if="isLoggedIn" class="hover:underline">Calendar</router-link>
-    <router-link to="/BookAppointment" v-if="isLoggedIn" class="hover:underline">Book Appointment</router-link>
-    <router-link to="/ScheduledAppointments" v-if="isLoggedIn" class="hover:underline">Scheduled Appointments</router-link>
     <button @click="logout" v-if="isLoggedIn" class="hover:underline">Logout</button>
   </nav>
 </template>
