@@ -1,5 +1,5 @@
 <template>
-  <div class="flex min-h-screen bg-gray-100 relative">
+  <div class="flex flex-col min-h-screen bg-gray-100 relative">
     <button @click="toggleSidebar" class="toggle-button">
       ☰
     </button>
@@ -32,9 +32,9 @@
       </div>
 
       <!-- Main Content Area -->
-      <div class="flex-1 flex justify-center ml-64" :class="[isSidebarOpen ? 'ml-72 lg:ml-96 xl:ml-[32rem] 2xl:ml-[36rem]' : '']">
-        <div class="w-full max-w-lg p-6">
-          <form @submit.prevent="createAppointment" class="space-y-2 bg-white p-6 rounded-lg shadow-md w-full mx-auto">
+      <div class="fixed flex-1 flex justify-center ml-64" :class="[isSidebarOpen ? 'ml-72 lg:ml-96 xl:ml-[32rem] 2xl:ml-[36rem]' : '']">
+        <div class="relative w-full max-w-lg p-6">
+          <form @submit.prevent="createAppointment" class="relative space-y-2 bg-white p-6 rounded-lg shadow-md w-full mx-auto">
             <input
               v-model="newAppointment.title"
               type="text"

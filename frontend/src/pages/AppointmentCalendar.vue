@@ -5,6 +5,7 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import { INITIAL_EVENTS, createEventId } from '../event-utils'
+import ApiService from '../services/ApiService.js'
 
 export default defineComponent({ 
   name: 'AppointmentCalendar',
@@ -13,6 +14,7 @@ export default defineComponent({
   },
   data() {
     return {
+      appointments: [],
       isSidebarOpen: true, 
       calendarOptions: {
         plugins: [
@@ -38,6 +40,9 @@ export default defineComponent({
       },
       currentEvents: [],
     }
+  },
+  mounted() {
+    this.fetchAppointments();
   },
   methods: {
     handleWeekendsToggle() {
@@ -68,13 +73,30 @@ export default defineComponent({
       this.currentEvents = events
 
     },
-    fetchAppointments() {
-      // Fetch appointments logic
+    async fetchAppointments() {
+      try {
+        const response = await ApiService.getAppointments('/appointments');
+        this.appointments = response.data;
+        this.calendarOptions.events = this.appointments;
+      } catch (error) {
+        console.error('Error fetching appointments:', error);
+      }
     },
-    mounted() {
-      this.fetchAppointments();
-    }
-}
+    async addAppointment(newAppointment) {
+      try {
+        const response = await ApiService.createAppointment(newAppointment);
+        this.appointments.push(response.data);
+        this.calendarOptions.events = this.appointments;
+      } catch (error) {
+        console.error('Error adding appointment:', error);
+      }
+    },
+  },
+  watch: {
+    appointments(newAppointments) {
+      this.calendarOptions.events = newAppointments;
+    },
+  },
 });
 
 </script>
@@ -115,21 +137,23 @@ export default defineComponent({
 
     <!-- Main Content Area -->
     <div class="calendar-container">
-      <button @click="$emit('close-calendar')" class="close-button">
-      &times;
-      </button>
+      <div class="full-calendar">
+        <button @click="$emit('close-calendar')" class="close-button">
+        &times;
+        </button>
           <FullCalendar
             class='demo-app-calendar'
             :options='calendarOptions'
           >
             <template v-slot:eventContent='arg'> 
-              <b>{{ arg.timeText }}</b> 
+              <b>{{ arg.timeText }}</b>  
               <i>{{ arg.event.title }}</i>
             </template>
           </FullCalendar>
-        </div>
+      </div>
+      </div>
   </div>
-</template>
+</template> 
 
 <style scoped>
 h2 {
@@ -150,7 +174,7 @@ ul {
   left: 0;
   padding-top: 4rem;
   background-color: #1f2937;
-  transition: transform 0.3s ease-in-out;
+  transition: transform 0.3s ease-in-out; 
 }
 
 .calendar-container {
@@ -161,7 +185,8 @@ ul {
   padding: 1.5rem;
   max-width: 30rem;
   margin-top: 0.75rem;
-}
+  flex-grow: 1;
+} 
 
 .close-button {
   position: absolute;
@@ -176,15 +201,20 @@ ul {
   line-height: 1;
 }
 
-
-.calendar-container .fc-toolbar-title {
-  font-size: 0.25rem !important;
+.fc {
+  max-width: 1100px;
+  margin: 0 auto;
 }
 
-.calendar-container .fc-button {
-  font-size: 0.25rem !important;
-  padding: 0.25rem 0.5rem !important;
+.demo-app-calendar {
+  font-size: 15px;
 }
+
+
+/*.fc-button {
+  font-size: 10px !important;
+  padding: 0.25rem 1rem !important;
+}*/
 
 b {
 margin-right: 3px;
