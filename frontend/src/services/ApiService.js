@@ -1,4 +1,3 @@
-// Connect Frontend to Backend
 import axios from 'axios';
 
 const apiClient = axios.create({
@@ -47,9 +46,8 @@ export default {
   },
   deleteAppointment(appointmentId, config = {}) {
     return apiClient.delete(`/appointments/${appointmentId}`, config);
-  },  
+  },
   updateAppointmentStatus(appointmentId, status, config = {}) {
     return apiClient.put(`/appointments/${appointmentId}/status`, { status }, config);
   }
-  
 };

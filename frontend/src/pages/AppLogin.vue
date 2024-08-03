@@ -55,40 +55,49 @@ export default {
     };
   },
   methods: {
-  async login() {
-    try {
-      const response = await ApiService.loginUser({ email: this.email, password: this.password });
-      console.log('Login successful', response.data);
+    async login() {
+      try {
+        const response = await ApiService.loginUser({ email: this.email, password: this.password });
+        console.log('Login successful', response.data);
 
-      // Store token and role in localStorage
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('role', response.data.role);
+        // Store token and user data in localStorage
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('role', response.data.role);
+        localStorage.setItem('user', JSON.stringify(response.data.user)); // Store user data
 
-      // Set login state
-      this.isLoggedIn = true;
+        // Set login state
+        this.isLoggedIn = true;
 
-      // Redirect based on the role
-      if (response.data.role === 'admin') {
-        this.$router.push('/AdminDashboard'); 
-      } else {
-        this.$router.push('/UserDashboard');
+        // Redirect based on the role
+        if (response.data.role === 'admin') {
+          this.$router.push('/AdminDashboard');
+        } else {
+          this.$router.push('/UserDashboard');
+        }
+      } catch (error) {
+        console.error('Login failed', error);
+        this.errorMessage = 'Login failed. Please check your email and password';
       }
-    } catch (error) {
-      console.error('Login failed', error);
-      this.errorMessage = 'Login failed. Please check your email and password';
-    }
-  },
-  loginWithGoogle() {
-      window.location.href = 'http://localhost:5000/auth/google'; 
     },
-  loginWithFacebook() {
+    loginWithGoogle() {
+      window.location.href = 'http://localhost:5000/auth/google';
+    },
+    loginWithFacebook() {
       window.location.href = 'http://localhost:5000/auth/facebook';
     }
   },
   mounted() {
-    this.isLoggedIn = !!localStorage.getItem('token');
+    const token = localStorage.getItem('token');
+    if (token) {
+      this.isLoggedIn = true;
+      this.isLoggedIn = !!localStorage.getItem('token');
+    } else {
+      localStorage.removeItem('user'); // Clear any potentially invalid user data
+      this.isLoggedIn = false;
+    }
   }
 };
 </script>
+
 
 

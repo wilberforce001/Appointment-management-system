@@ -4,7 +4,6 @@ import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
-import { INITIAL_EVENTS, createEventId } from '../event-utils'
 import ApiService from '../services/ApiService.js'
 
 export default defineComponent({ 
@@ -28,7 +27,6 @@ export default defineComponent({
           right: 'dayGridMonth,timeGridWeek,timeGridDay'
         },
         initialView: 'dayGridMonth',
-        initialEvents: INITIAL_EVENTS, // alternatively, use the `events` setting to fetch from a feed
         editable: true,
         selectable: true,
         selectMirror: true,
@@ -49,19 +47,66 @@ export default defineComponent({
       this.calendarOptions.weekends = !this.calendarOptions.weekends; // update a property
     },
     handleDateSelect(selectInfo) {
+      console.log('Handling date select with:', selectInfo);
+
       let title = prompt('Please enter a new title for your event');
-      let calendarApi = selectInfo.view.calendar
+      let description = prompt('Please enter a description for your event');
+    
+      // Get raw user data from local storage
+      let rawUserData = localStorage.getItem('user');
+      console.log('Raw user data from local storage:', rawUserData);
+    
+      // Check if rawUserData is undefined or null and handle the error
+      if (!rawUserData) {
+        console.error('User data is not available in local storage');
+        alert('You must be logged in to create an appointment.');
+        return;
+      }
+    
+      // Parse user data
+      let user;
+      try {
+        user = JSON.parse(rawUserData);
+      } catch (error) {
+        console.error('Error parsing user data:', error);
+        alert('Error reading user data. Please log in again.');
+        return;
+      }
+    
+      console.log('Parsed user data:', user);
+    
+      if (!user || !user._id) {
+        console.error('User ID is missing from the parsed user data');
+        alert('You must be logged in to create an appointment.');
+        return;
+      }
+    
+      // Create the appointment object
+      const newAppointment = {
+        title: title || 'New Appointment',
+        description: description || 'Appointment description',
+        date: selectInfo.startStr, 
+        userId: user._id
+      };
+    
+      console.log('New appointment object:', newAppointment);
+      this.addAppointment(newAppointment); // Call the addAppointment method
+    },       
+    async addAppointment(newAppointment) {
+      try {
+        // Call the API to create the appointment
+        const response = await ApiService.createAppointment(newAppointment);
 
-      calendarApi.unselect() // clear date selection
-
-      if (title) {
-        calendarApi.addEvent({
-          id: createEventId(),
-          title,
-          start: selectInfo.startStr,
-          end: selectInfo.endStr,
-          allDay: selectInfo.allDay
-        })
+        if (response && response.data) {
+          this.appointments.push(response.data);
+          this.calendarOptions.events = this.appointments;
+          
+          console.log('Appointment created:', response.data);
+        } else {
+          console.error('Failed to create appointment: No response data');
+        }
+      } catch (error) {
+        console.error('Error adding appointment:', error);
       }
     },
     handleEventClick(clickInfo) {
@@ -71,7 +116,6 @@ export default defineComponent({
     },
     handleEvents(events) {
       this.currentEvents = events
-
     },
     async fetchAppointments() {
       try {
@@ -82,15 +126,6 @@ export default defineComponent({
         console.error('Error fetching appointments:', error);
       }
     },
-    async addAppointment(newAppointment) {
-      try {
-        const response = await ApiService.createAppointment(newAppointment);
-        this.appointments.push(response.data);
-        this.calendarOptions.events = this.appointments;
-      } catch (error) {
-        console.error('Error adding appointment:', error);
-      }
-    },
   },
   watch: {
     appointments(newAppointments) {
@@ -98,8 +133,7 @@ export default defineComponent({
     },
   },
 });
-
-</script>
+</script>  
 
 <template>
   <div class="flex min-h-screen bg-gray-100 relative">
@@ -221,4 +255,11 @@ margin-right: 3px;
 }
 
 </style>
+
+
+
+
+
+
+
 

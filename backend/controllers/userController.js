@@ -2,6 +2,19 @@ import User from '../models/UserData.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (token == null) return res.sendStatus(401);
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) return res.sendStatus(403);
+    req.user = user;
+    next();
+  });
+};
+
 // Register a new user
 export const registerUser = async (req, res) => {
   try {
@@ -36,11 +49,10 @@ export const loginUser = async (req, res) => {
       return res.status(400).json({ message: 'Invalid email or password' });
     }
 
-    const token = jwt.sign(
-      { id: user._id, role: user.role },
-      process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
     res.json({ token, userId: user._id, role: user.role });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error('Login error:', err); // Log the error for debugging
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 };

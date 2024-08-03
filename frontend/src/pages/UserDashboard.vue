@@ -1,117 +1,3 @@
-<template>
-  <div class="flex flex-col min-h-screen bg-gray-100 relative">
-    <button @click="toggleSidebar" class="toggle-button">
-      ☰
-    </button>
-    <div class="flex">
-      <!-- Sidebar -->
-      <div :class="['sidebar bg-sky-500 text-white shadow-md transition-transform duration-300', { 'translate-x-0': isSidebarOpen, '-translate-x-full': !isSidebarOpen }]">
-        <div class="p-4 flex items-center">
-          <h2 class="text-2xl font-bold">Dashboard</h2>
-        </div>
-        <div class="flex flex-col">
-          <h3 class="appointments-heading text-lg font-bold mb-0 ml-5">Appointments</h3>
-          <ul class="space-y-0">
-            <li
-              v-for="appointment in appointments"
-              :key="appointment._id"
-              @click="selectAppointment(appointment)"
-              class="p-2 hover:bg-sky-400 cursor-pointer flex items-center space-x-2 truncate"
-            >
-              <span class="font-medium truncate ml-4">{{ appointment.title }}</span>
-            </li>
-          </ul>
-          <!-- Button to toggle the calendar visibility -->
-          <button @click="toggleCalendar" class="w-32 mt-4 ml-5 bg-sky-600 py-2 px-2 rounded-md text-center hover:bg-sky-700">
-            Calendar
-          </button>
-          <button @click="logout" class="w-32 mt-4 ml-5 bg-red-600 py-2 px-2 rounded-md text-center hover:bg-sky-700">
-            <span class="font-medium">Logout</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Main Content Area -->
-      <div class="fixed flex-1 flex justify-center ml-64" :class="[isSidebarOpen ? 'ml-72 lg:ml-96 xl:ml-[32rem] 2xl:ml-[36rem]' : '']">
-        <div class="relative w-full max-w-lg p-6">
-          <form @submit.prevent="createAppointment" class="relative space-y-2 bg-white p-6 rounded-lg shadow-md w-full mx-auto">
-            <input
-              v-model="newAppointment.title"
-              type="text"
-              placeholder="Title"
-              required
-              class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <input
-              v-model="newAppointment.description"
-              type="text"
-              placeholder="Description"
-              class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <input
-              v-model="newAppointment.date"
-              type="date"
-              placeholder="Date"
-              required
-              class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              :min="today"
-              :max="oneWeekFromToday"
-            />
-            <button
-              type="submit"
-              class="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              Create Appointment
-            </button>
-          </form>
-
-          <!-- Appointment Details -->
-          <div v-if="selectedAppointment" class="bg-white p-6 rounded-lg shadow-md w-full mt-3">
-            <h3 class="text-xl font-bold mb-4">Appointment Details</h3>
-            <p><strong>Title:</strong> {{ selectedAppointment.title }}</p>
-            <p><strong>Description:</strong> {{ selectedAppointment.description }}</p>
-            <p><strong>Date:</strong> {{ selectedAppointment.date }}</p>
-            <div class="mt-4 flex space-x-2">
-              <button @click="rescheduleAppointment(selectedAppointment)" class="bg-yellow-500 text-white py-2 px-4 rounded-md hover:bg-yellow-600">
-                Reschedule
-              </button>
-              <button @click="cancelAppointment(selectedAppointment._id)" class="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600">
-                Cancel
-              </button>
-            </div>
-          </div>
-
-          <!-- Reschedule Modal -->
-          <div v-if="showRescheduleModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center" @click="closeModal">
-            <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm" @click.stop style="top: 10%; position: absolute;">
-              <h3 class="text-lg font-bold mb-4">Reschedule Appointment</h3>
-              <form @submit.prevent="submitReschedule">
-                <input
-                  v-model="rescheduleAppointmentData.date"
-                  type="date"
-                  required
-                  class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  :min="today"
-                  :max="oneWeekFromToday"
-                />
-                <button
-                  type="submit"
-                  class="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 mt-4"
-                >
-                  Reschedule
-                </button>
-              </form>
-            </div>
-          </div>
-
-          <!-- Conditionally render the calendar -->
-          <AppointmentCalendar v-if="isCalendarOpen" @close-calendar="toggleCalendar" />
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script>
 import ApiService from '../services/ApiService.js';
 import AppointmentCalendar from '../pages/AppointmentCalendar.vue';
@@ -249,7 +135,121 @@ export default {
 };
 </script>
 
-<style scoped>
+<template>
+  <div class="flex flex-col min-h-screen bg-gray-100 relative">
+    <button @click="toggleSidebar" class="toggle-button">
+      ☰
+    </button>
+    <div class="flex">
+      <!-- Sidebar -->
+      <div :class="['sidebar bg-sky-500 text-white shadow-md transition-transform duration-300', { 'translate-x-0': isSidebarOpen, '-translate-x-full': !isSidebarOpen }]">
+        <div class="p-4 flex items-center">
+          <h2 class="text-2xl font-bold">Dashboard</h2>
+        </div>
+        <div class="flex flex-col">
+          <h3 class="appointments-heading text-lg font-bold mb-0 ml-5">Appointments</h3>
+          <ul class="space-y-0">
+            <li
+              v-for="appointment in appointments"
+              :key="appointment._id"
+              @click="selectAppointment(appointment)"
+              class="p-2 hover:bg-sky-400 cursor-pointer flex items-center space-x-2 truncate"
+            >
+              <span class="font-medium truncate ml-4">{{ appointment.title }}</span>
+            </li>
+          </ul>
+          <!-- Button to toggle the calendar visibility -->
+          <button @click="toggleCalendar" class="w-32 mt-4 ml-5 bg-sky-600 py-2 px-2 rounded-md text-center hover:bg-sky-700">
+            Calendar
+          </button>
+          <button @click="logout" class="w-32 mt-4 ml-5 bg-red-600 py-2 px-2 rounded-md text-center hover:bg-sky-700">
+            <span class="font-medium">Logout</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Content Area -->
+      <div class="main-content fixed flex-1 flex justify-center ml-64" :class="[isSidebarOpen ? 'ml-72 lg:ml-96 xl:ml-[32rem] 2xl:ml-[36rem]' : '']">
+        <div class="relative w-full max-w-lg p-6">
+          <form @submit.prevent="createAppointment" class="relative space-y-2 bg-white p-6 rounded-lg shadow-md w-full mx-auto">
+            <input
+              v-model="newAppointment.title"
+              type="text"
+              placeholder="Title"
+              required
+              class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <input
+              v-model="newAppointment.description"
+              type="text"
+              placeholder="Description"
+              class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <input
+              v-model="newAppointment.date"
+              type="date"
+              placeholder="Date"
+              required
+              class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              :min="today"
+              :max="oneWeekFromToday"
+            />
+            <button
+              type="submit"
+              class="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              Create Appointment
+            </button>
+          </form>
+
+          <!-- Appointment Details -->
+          <div v-if="selectedAppointment" class="bg-white p-6 rounded-lg shadow-md w-full mt-3">
+            <h3 class="text-xl font-bold mb-4">Appointment Details</h3>
+            <p><strong>Title:</strong> {{ selectedAppointment.title }}</p>
+            <p><strong>Description:</strong> {{ selectedAppointment.description }}</p>
+            <p><strong>Date:</strong> {{ selectedAppointment.date }}</p>
+            <div class="mt-4 flex space-x-2">
+              <button @click="rescheduleAppointment(selectedAppointment)" class="bg-yellow-500 text-white py-2 px-4 rounded-md hover:bg-yellow-600">
+                Reschedule
+              </button>
+              <button @click="cancelAppointment(selectedAppointment._id)" class="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600">
+                Cancel
+              </button>
+            </div>
+          </div>
+
+          <!-- Reschedule Modal -->
+          <div v-if="showRescheduleModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center" @click="closeModal">
+            <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm" @click.stop style="top: 10%; position: absolute;">
+              <h3 class="text-lg font-bold mb-4">Reschedule Appointment</h3>
+              <form @submit.prevent="submitReschedule">
+                <input
+                  v-model="rescheduleAppointmentData.date"
+                  type="date"
+                  required
+                  class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  :min="today"
+                  :max="oneWeekFromToday"
+                />
+                <button
+                  type="submit"
+                  class="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 mt-4"
+                >
+                  Reschedule
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Conditionally render the calendar -->
+          <div v-if="isCalendarOpen" class="w-full flex justify-center mt-6">
+            <AppointmentCalendar @close-calendar="toggleCalendar" /> 
+          </div>       
+        </div>
+      </div>
+    </div>
+  </div>
+</template><style scoped>
 .toggle-button {
   position: fixed;
   top: 1rem;
@@ -285,7 +285,7 @@ export default {
 }
 .form-container,
 .appointment-details {
-  max-width: 600px;
+  max-width: 1200px;
   margin: auto;
   padding: 20px;
 }
@@ -296,4 +296,31 @@ export default {
   margin-bottom: 10px;
 }
 
+.main-content {
+  height: calc(100vh - 4rem); /* Adjust height based on your layout */
+  overflow-y: auto; /* Enable vertical scrolling */
+  transition:margin-left 0.3s ease;
+}
+
+@media (max-width: 768px) {
+    .main-content {
+      margin-left: 16rem;
+    }
+  }
+
+.sidebar {
+  height: 100vh; /* Full viewport height */
+  overflow-y: auto; /* Enable vertical scrolling */
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+      width: 16rem;
+    }
+  }
+
 </style>
+
+
+
+
