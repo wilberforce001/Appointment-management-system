@@ -1,6 +1,6 @@
 <script>
 import ApiService from '../services/ApiService.js';
-import AppointmentCalendar from '../pages/AppointmentCalendar.vue';
+import AppointmentCalendar from './AppointmentCalendar.vue';
 
 export default {
   components: { AppointmentCalendar },

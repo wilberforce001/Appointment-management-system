@@ -4,7 +4,7 @@ import { ref, onMounted } from 'vue';
 import { toast } from 'vue3-toastify';
 import ApiService from '../services/ApiService.js';
 import 'vue3-toastify/dist/index.css';
-import AppointmentCalendar from '../pages/AppointmentCalendar.vue';
+import AppointmentCalendar from './AppointmentCalendar.vue';
 
 
 export default {
