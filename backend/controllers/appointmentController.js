@@ -16,7 +16,7 @@ export const updateAppointmentStatus = async (req, res) => {
 
   if (!['pending', 'confirmed', 'canceled'].includes(status)) {
     return res.status(400).json({ message: 'Invalid status value' });
-  }
+  } 
 
   try {
     const appointment = await Appointment.findById(id);
@@ -31,8 +31,6 @@ export const updateAppointmentStatus = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
-
 
 export const updateAppointment = async (req, res) => {
   try {

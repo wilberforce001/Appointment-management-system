@@ -1,92 +1,137 @@
 <script>
+import { useRouter } from 'vue-router';
+import { ref, onMounted } from 'vue';
+import { toast } from 'vue3-toastify';
 import ApiService from '../services/ApiService.js';
+import 'vue3-toastify/dist/index.css';
 import AppointmentCalendar from '../pages/AppointmentCalendar.vue';
+
 
 export default {
   components: { AppointmentCalendar },
   name: 'AdminDashboard',
-  data() {
-    return {
-      appointments: [],
-      newTimeSlot: {
+  setup() {
+    const router = useRouter();
+    const isLoading = ref(false);
+    const appointments = ref([]);
+    const newTimeSlot = ref({
         title: '',
         description: '',
         date: '',
         startTime: '',
         endTime: '',
-      },
-      errorMessage: '',
-      selectedAppointment: null,
-      showSidebar: false,
-      isCalendarOpen: false,
-    };
-  },
-  async created() {
-    await this.fetchAppointments();
-  },
-  methods: {
-    async fetchAppointments() {
+      });
+    const errorMessage = ref(''); 
+    const selectedAppointment = ref(null);
+    const showSidebar = ref (false);
+    const isCalendarOpen = ref(false);
+
+    const showSuccessMessage = (message) => {
+      toast.success(message, {
+        position: 'top-right',
+      });
+    }
+    const showErrorMessage = (message) => {
+      toast.error(message, {
+        position: 'top-right',
+      });
+    }
+
+    const fetchAppointments = async () => {
       try {
-        const response = await ApiService.getAppointments({
+        const response = await ApiService.getAppointments({ 
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         });
-        this.appointments = response.data;
+        appointments.value = response.data;
+        console.log('Fetched Appointments:', appointments.value); // Log the fetched appointments
+        appointments.value.forEach(appointment => {
+          console.log('Appointment Details:', appointment);
+        })
+
       } catch (error) {
-        console.error('Fetch appointments failed:', error.response ? error.response.data : error.message);
-        this.errorMessage = 'Failed to fetch appointments. Please try again.';
+        console.error('Fetch appointments failed:', error.response ? error.response.data : error);
+        errorMessage.value = 'Failed to fetch appointments. Please try again.';
       }
-    },
-    async addTimeSlot() {
+    };
+    const addTimeSlot = async () => {
       try {
-        const response = await ApiService.createAppointment(this.newTimeSlot, {
+        const response = await ApiService.createAppointment(newTimeSlot.value, {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         });
         if (response.status === 201) {
-          this.newTimeSlot = { title: '', description: '', date: '', startTime: '', endTime: '' }; // Reset form
-          await this.fetchAppointments(); // Refresh appointments list
+          newTimeSlot.value = { title: '', description: '', date: '', startTime: '', endTime: '' }; // Reset form
+          await fetchAppointments(); // Refresh appointments list
         }
       } catch (error) {
         console.error('Add time slot failed:', error.response ? error.response.data : error.message);
-        this.errorMessage = 'Failed to add time slot. Please try again.';
+        errorMessage.value = 'Failed to add time slot. Please try again.';
       }
-    },
-    async changeStatus(appointmentId, status) {
+    };
+    const changeStatus = async (appointmentId, status) => {
       try {
+        isLoading.value = true;
         const response = await ApiService.updateAppointmentStatus(appointmentId, status, {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         });
-        if (response.status === 200) {
-          await this.fetchAppointments(); // Refresh appointments list
-          this.selectedAppointment = null; // Deselect appointment
+
+        if (response && response.status === 200) {
+          console.log('Updated Appointment:', response.data); // Log the updated appointment object
+
+          showSuccessMessage(`Appointment ${status} successfully`); 
+
+          await fetchAppointments(); // Refresh appointments list
+          selectedAppointment.value = null; // Deselect appointment
+          await fetchAppointments();
+
+          // Deselect the appointment after status change
+          selectedAppointment.value = null;
         }
       } catch (error) {
         console.error('Update appointment status failed:', error.response ? error.response.data : error.message);
-        this.errorMessage = 'Failed to update appointment status. Please try again.';
+        showErrorMessage('Failed to update appointment status. Please try again.');
+      } finally {
+        isLoading.value = false;
       }
-    },
-    selectAppointment(appointment) {
-      this.selectedAppointment = appointment;
-    },
-    toggleSidebar() {
-      this.showSidebar = !this.showSidebar;
-    },
-    toggleCalendar() {
-      this.isCalendarOpen = !this.isCalendarOpen;
-    },
-    logout() {
+    };
+
+    const selectAppointment = (appointment) => {
+      selectedAppointment.value = appointment;
+    };
+    const toggleSidebar = () => {
+      showSidebar.value = !showSidebar.value;
+    };
+    const toggleCalendar = () => {
+      isCalendarOpen.value = !isCalendarOpen.value;
+    };
+    const logout = () => {
       localStorage.removeItem('token');
-      this.$router.push('/login');
-    },
-    
-    beforeRouteEnter(to, from, next) {
-    if (!localStorage.getItem('token')) {
-      next('/login');
-    } else {
-      next();
-    }
-  }
+      router.push('/login');
+    };
+
+    onMounted(() => {
+      fetchAppointments();
+    });
+
+    return {
+      isLoading,
+      appointments,
+      newTimeSlot,
+      selectedAppointment,
+      showSidebar,
+      isCalendarOpen,
+      errorMessage,
+      showSuccessMessage,
+      showErrorMessage,
+      fetchAppointments,
+      addTimeSlot,
+      changeStatus,
+      selectAppointment,
+      toggleSidebar,
+      toggleCalendar,
+      logout,
+    };
   },
-};
+}; 
 </script>
 
 <template>
@@ -122,7 +167,7 @@ export default {
       <div class="flex justify-between items-center mb-6">
         <h2 class="text-2xl font-bold text-gray-800">Admin Dashboard</h2>
         <button @click="toggleSidebar" class="bg-blue-500 text-white p-2 rounded">
-          {{ showSidebar ? 'Hide Appointments' : 'Show Appointments' }}
+          {{ showSidebar ? 'Hide Appointments' : 'Show Appointments' }} 
         </button>
       </div>
 

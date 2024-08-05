@@ -1,86 +1,73 @@
 # Appointment-management-system
 **A software that can be used by companies and service providers to streamline their service appointments**  
 
-By using the system, potential customers can know and  
-choose their preferred appointment times according to the companies and service providers' available time slots.  
-This project does not include a B2C marketplace-like interface for customers to browse different service providers.
+The Appointment Management System is a web application designed to help users schedule, manage, and keep track of their appointments. This project features user authentication, appointment creation, and appointment listing functionalities. It is built using Node.js and Vue.js, with a MongoDB database for data storage.
 
-**Steps followed in the project**  
-**<u>1. Setting up the Backend</u>**  
-This will carry the functionalities of user registration and login.  
-**npm init -y**: Initiliazed the project by setting up a new Node.js project with Express for the backend. 
+**Features**  
+**User Authentication:** Secure login and registration for users  
+**Appointment Management:** Create, view, and manage appointments  
+**Responsive Design:** Accessible on various devices. 
 
-Installed the necessary packages: **MongoDB** for the database, and **Passport.js** for authentication. 
+# Technologies Used
+**Frontend:** Vue.js, Tailwind CSS  
+**Backend:** Node.js, Express.js  
+**Database:** MongoDB  
+**Authentication:** JWT (JSON Web Tokens), bcrypt
 
-**Database configuration**  
-**Installed MongoDB and used Docker container to run it**  
-I did this because I was facing compatibility issues installing MongoDB in my laptop. By running MongoDB inside a container,  
-it was possible to abstract away hardware compatibility issues.  
-Used **MongoDB** for storing user and appointment data  
-Ran these commands to start MongoDB and use it:  
+# Installation
+**Prerequisites**  
+Node.js and npm (Node Package Manager) installed  
+MongoDB installed and running
+
+# Setup  
+**1. Clone the Repository:**  
+git clone git@github.com:wilberforce001/Appointment-management-system.git
+cd Appointment-management-system  
+
+**2. Install Backend Dependencies:**  
+cd backend  
+npm install  
+
+**3. Configure Environment Variables:**  
+Create a `.env` file in the backend directory and add the following:
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+
+**4. Fire up MongoDB with the following:**  
 ***sudo docker start mongodb***  
 ***sudo systemctl status docker:*** to check the status of MongoDB  
 ***sudo docker exec -it mongodb mongo:*** to connect to MongoDB shell 
 
-**Create Appointment Model**  
-Defined a Mongoose schema for storing appointment data  
-**Extended Routes**  
-Added routes for creating, viewing, and managing appointments.  
+**5. Start the Backend Server:**  
+node server.js  
 
-The basic setup of the backend was implemented with Express, MongoDB and Passport.js for authentication. The setup includes  the functionalities for registration and logging-in. 
+**6. Install Frontend Dependencies:**
+cd ../frontend  
+npm install  
 
-**<u>2. Setting up the Frontend</u>**  
-***npm install -g @vue/cli:*** Global installtion of CLI  
-***vue create frontend:*** Create new Vue project(frontend)  
-***cd frontend: npm run serve*** - start the developement server
+**7. Start the Frontend Development Server:**  
+npm run serve  
+**The application should now be running on http://localhost:8080.** 
 
-**Installed Tailwind CSS for purposes of styling**  
-***npm install -D tailwindcss postcss autoprefixe:*** to install Tailwind CSS and its dependencies.  
-***npx tailwindcss init -p:*** Initialize Tailwind CSS
+# Usage 
+**1. Register a New User:**  
+Navigate to the registration page and fill in the required fields to create a new account.
 
-**Set Up Routing**  
-Vue Router was used for navigation between components: Login.vue, Register.vue, Dashboard.vue and Calender.vue.  
-***npm install vue-router@4:*** to install Vue Router
-Configured Vue Router
+**2. Log In - either as a User or Admin:**  
+Use the login page to authenticate with your credentials.
 
-**Home page**  
-Setup UserHome which is the landing page of the application with a welcome message, login input and a link to rigister a new visitor.
+**3. For users, they can log in and Create an aApointment**
+After logging in, go to the appointment management section to create a new appointment.  
 
-**Navigation to the Dashboard**  
-Once a user is logged in, they are redirected to the dashboard which has navigation links to different parts of the application. 
+**4. For Admins, they can log in and View Appointments**
+Your appointments will be listed in the dashboard. You can view details and manage them from this interface. 
 
-**Checking User details in the Database - MongoDB**  
-***use appointment-system***: to connect to the Database  
-***db.users.find().pretty()***: to query the Users collection 
-***db.users.deleteMany({})***: to delete all documents in the users collection  
-***db.users.dropIndex('username_1')***: remove an index in MongoDB database  
-***db.users.getIndexes()***: check indexes in MongoDB database  
-***db.users.find({ email: null })***: verify that no documents with null values in fields like email are left in your collection.  
-***db.users.deleteMany({ email: null })***: clean up any documents with `null` values for required fields. 
-
-**Admin Dashboard**
-Updated User.js to include role attributes, updated the registration endpoint to allow role setting in user registration and updated login component to handle and update route guards accordingly.
+# Contact
+For any questions or feedback, please contact:  
+- **Email:** kipyegonwilber@gmail.com  
+- **GitHub:** wilberforce001
 
 
-
-
-src/
-├── Pages/
-│   ├── UserHome.vue
-│   ├── UserRegister.vue
-│   ├── UserDashboard.vue
-│   ├── UserAdmin.vue
-│   ├── BookAppointment.vue
-│   ├── ScheduleAppointment.vue
-├── views/
-│   ├── UserHome.vue
-│   ├── Dashboard.vue
-├── router/
-│   └── index.js
-├── store/
-│   └── index.js
-├── App.vue
-└── main.js
 
 
 
