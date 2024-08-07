@@ -46,7 +46,7 @@ app.use('/users', userRoutes);
 
 // Root route
 app.get('/', (req, res) => {
-  res.send('Welcome to the Appointment Management System AP');
+  res.send('Welcome to the Appointment Management System API!');
 });
 
 // Authentication routes
