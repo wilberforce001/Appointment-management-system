@@ -244,16 +244,9 @@ ul {
   font-size: 15px;
 }
 
-
-/*.fc-button {
-  font-size: 10px !important;
-  padding: 0.25rem 1rem !important;
-}*/
-
 b {
 margin-right: 3px;
 }
-
 </style>
 
 
