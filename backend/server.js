@@ -43,6 +43,12 @@ app.use(passport.session());
 app.use('/appointments', appointmentRoutes);
 app.use('/users', userRoutes);
 
+
+// Root route
+app.get('/', (req, res) => {
+  res.send('Welcome to the Appointment Management System AP');
+});
+
 // Authentication routes
 app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/' }), (req, res) => {
