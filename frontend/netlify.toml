@@ -1,0 +1,10 @@
+[build]
+  # Skip the build step
+  command = "echo 'Skipping build'"
+  publish = "dist"  
+
+[build.environment]
+  NODE_ENV = "production"
+
+[build.processing]
+  skip_processing = false
