@@ -1,7 +1,6 @@
 [build]
   # Skip the build step
   command = "echo 'Skipping build'"
-  publish = "frontend/dist"  
 
 [build.environment]
   NODE_ENV = "production"
