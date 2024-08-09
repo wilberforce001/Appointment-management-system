@@ -1,11 +1,8 @@
 <script>
 import { useRouter } from 'vue-router';
 import { ref, onMounted } from 'vue';
-import { toast } from 'vue3-toastify';
 import ApiService from '../services/ApiService.js';
-import 'vue3-toastify/dist/index.css';
 import AppointmentCalendar from './AppointmentCalendar.vue';
-
 
 export default {
   components: { AppointmentCalendar },
@@ -22,20 +19,10 @@ export default {
         endTime: '',
       });
     const errorMessage = ref(''); 
+    const successMessage = ref(''); // New ref for success messages
     const selectedAppointment = ref(null);
     const showSidebar = ref (false);
     const isCalendarOpen = ref(false);
-
-    const showSuccessMessage = (message) => {
-      toast.success(message, {
-        position: 'top-right',
-      });
-    }
-    const showErrorMessage = (message) => {
-      toast.error(message, {
-        position: 'top-right',
-      });
-    }
 
     const fetchAppointments = async () => {
       try {
@@ -43,30 +30,29 @@ export default {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         });
         appointments.value = response.data;
-        console.log('Fetched Appointments:', appointments.value); // Log the fetched appointments
-        appointments.value.forEach(appointment => {
-          console.log('Appointment Details:', appointment);
-        })
-
+        console.log('Fetched Appointments:', appointments.value);
       } catch (error) {
         console.error('Fetch appointments failed:', error.response ? error.response.data : error);
         errorMessage.value = 'Failed to fetch appointments. Please try again.';
       }
     };
+
     const addTimeSlot = async () => {
       try {
         const response = await ApiService.createAppointment(newTimeSlot.value, {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         });
         if (response.status === 201) {
-          newTimeSlot.value = { title: '', description: '', date: '', startTime: '', endTime: '' }; // Reset form
-          await fetchAppointments(); // Refresh appointments list
+          newTimeSlot.value = { title: '', description: '', date: '', startTime: '', endTime: '' };
+          successMessage.value = 'Time slot added successfully.';
+          await fetchAppointments();
         }
       } catch (error) {
         console.error('Add time slot failed:', error.response ? error.response.data : error.message);
         errorMessage.value = 'Failed to add time slot. Please try again.';
       }
     };
+
     const changeStatus = async (appointmentId, status) => {
       try {
         isLoading.value = true;
@@ -75,20 +61,13 @@ export default {
         });
 
         if (response && response.status === 200) {
-          console.log('Updated Appointment:', response.data); // Log the updated appointment object
-
-          showSuccessMessage(`Appointment ${status} successfully`); 
-
-          await fetchAppointments(); // Refresh appointments list
-          selectedAppointment.value = null; // Deselect appointment
+          successMessage.value = `Appointment ${status} successfully`;
           await fetchAppointments();
-
-          // Deselect the appointment after status change
           selectedAppointment.value = null;
         }
       } catch (error) {
         console.error('Update appointment status failed:', error.response ? error.response.data : error.message);
-        showErrorMessage('Failed to update appointment status. Please try again.');
+        errorMessage.value = 'Failed to update appointment status. Please try again.';
       } finally {
         isLoading.value = false;
       }
@@ -120,8 +99,7 @@ export default {
       showSidebar,
       isCalendarOpen,
       errorMessage,
-      showSuccessMessage,
-      showErrorMessage,
+      successMessage,
       fetchAppointments,
       addTimeSlot,
       changeStatus,
@@ -131,7 +109,7 @@ export default {
       logout,
     };
   },
-}; 
+};
 </script>
 
 <template>
@@ -151,32 +129,35 @@ export default {
             <span class="text-gray-300">{{ appointment.date }}</span>
           </li>
         </ul>
-        <!-- Button to toggle the calendar visibility -->
-        <button @click="toggleCalendar" class="w-32 mt-4 ml-5 bg-sky-600 py-2 px-2 rounded-md text-center hover:bg-sky-700">
+        <button @click="toggleCalendar" class="w-full mt-4 bg-sky-600 py-2 px-4 rounded-md text-center hover:bg-sky-700">
           Calendar
         </button>
- 
-        <button @click="logout" class="w-32 mt-4 ml-5 bg-red-600 py-2 px-2 rounded-md text-center hover:bg-sky-700">
-            <span class="font-medium">Logout</span>
-          </button>
+        <button @click="logout" class="w-full mt-4 bg-red-600 py-2 px-4 rounded-md text-center hover:bg-red-700">
+          <span class="font-medium">Logout</span>
+        </button>
       </div>
     </transition>
 
     <!-- Main Content -->
-    <div :class="{'admin-dashboard ml-64': showSidebar, 'ml-0': !showSidebar}" class="flex-1 p-4 transition-all duration-300 ease-in-out max-w-2xl bg-gray-100">
-      <div class="flex justify-between items-center mb-6">
+    <div :class="{'ml-64': showSidebar, 'ml-0': !showSidebar}" class="flex-1 p-4 transition-all duration-300 ease-in-out bg-gray-100 relative">
+      <!-- Header with Toggle Button -->
+      <div class="flex justify-between items-center mb-6 relative">
         <h2 class="text-2xl font-bold text-gray-800">Admin Dashboard</h2>
-        <button @click="toggleSidebar" class="bg-blue-500 text-white p-2 rounded">
-          {{ showSidebar ? 'Hide Appointments' : 'Show Appointments' }} 
+        <button @click="toggleSidebar" class="bg-blue-500 text-white p-2 rounded md:hidden">
+          {{ showSidebar ? 'Hide Appointments' : 'Show Appointments' }}
         </button>
       </div>
 
+      <!-- Message Display -->
+      <div v-if="errorMessage" class="text-red-500 mb-4">{{ errorMessage }}</div>
+      <div v-if="successMessage" class="text-green-500 mb-4">{{ successMessage }}</div>
+
       <!-- Container for Manage Time Slots and Selected Appointment -->
-      <div class="overflow-y-auto max-h-[80vh] p-4 bg-white shadow rounded-md">
+      <div class="overflow-y-auto max-h-[80vh] p-4 bg-white shadow rounded-md mx-auto w-full md:w-3/4 lg:w-1/2 relative">
         <!-- Manage Available Time Slots -->
         <div class="mb-6">
           <h3 class="text-xl font-semibold mb-2 text-gray-700">Manage Time Slots</h3>
-          <form @submit.prevent="addTimeSlot" class="grid grid-cols-2 gap-4">
+          <form @submit.prevent="addTimeSlot" class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label class="block text-gray-600 text-sm">Title:</label>
               <input v-model="newTimeSlot.title" type="text" class="p-2 border rounded w-full" />
@@ -201,36 +182,40 @@ export default {
               <button type="submit" class="bg-blue-500 text-white p-2 rounded w-full">Add Time Slot</button>
             </div>
           </form>
-          <p v-if="errorMessage" class="text-red-500 mt-4">{{ errorMessage }}</p>
         </div>
-      </div>
+
         <!-- View Selected Appointment -->
-          <div class="appointments mt-3">   
-          <div v-if="selectedAppointment" class="mt-3">
-            <h3 class="text-xl font-semibold mb-2 text-gray-700">Selected Appointment</h3>
-            <div class="p-4 bg-gray-300 rounded shadow-inner">
-              <p><strong>Title:</strong> {{ selectedAppointment.title }}</p>
-              <p><strong>Description:</strong> {{ selectedAppointment.description }}</p>
-              <p><strong>Date:</strong> {{ selectedAppointment.date }}</p>
-              <p><strong>Status:</strong> {{ selectedAppointment.status }}</p>
-              <button @click="changeStatus(selectedAppointment._id, 'confirmed')" class="mt-2 bg-green-500 text-white p-2 rounded">Confirm</button>
-              <button @click="changeStatus(selectedAppointment._id, 'canceled')" class="mt-2 ml-3 bg-red-500 text-white p-2 rounded">Cancel</button>
-            </div>
+        <div v-if="selectedAppointment" class="mt-3">
+          <h3 class="text-xl font-semibold mb-2 text-gray-700">Selected Appointment</h3>
+          <div class="p-4 bg-gray-300 rounded shadow-inner">
+            <p><strong>Title:</strong> {{ selectedAppointment.title }}</p>
+            <p><strong>Description:</strong> {{ selectedAppointment.description }}</p>
+            <p><strong>Date:</strong> {{ selectedAppointment.date }}</p>
+            <p><strong>Status:</strong> {{ selectedAppointment.status }}</p>
+            <button @click="changeStatus(selectedAppointment._id, 'confirmed')" class="mt-2 bg-green-500 text-white p-2 rounded">Confirm</button>
+            <button @click="changeStatus(selectedAppointment._id, 'canceled')" class="mt-2 ml-3 bg-red-500 text-white p-2 rounded">Cancel</button>
           </div>
         </div>
+
         <!-- Conditionally render the calendar -->
-        <div v-if="isCalendarOpen" class="w-full flex justify-center mt-6">
-        <AppointmentCalendar @close-calendar="toggleCalendar" /> 
-      </div> 
+        <transition name="fade">
+          <div v-if="isCalendarOpen" class="absolute inset-0 flex justify-center items-center bg-white bg-opacity-90">
+            <div class="w-full max-w-4xl p-4 bg-white shadow-lg rounded-md">
+              <AppointmentCalendar @close-calendar="toggleCalendar" /> 
+            </div>
+          </div>
+        </transition>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
 .sidebar {
-  width: 16rem; /* Fixed width for the sidebar */
-  background-color: #2d3748; /* Tailwind gray-800 */
-  color: #ffffff; /* Tailwind white */
+  width: 16rem; 
+  background-color: #2d3748; 
+  color: #ffffff; 
+  z-index: 1000; /* Ensures the sidebar stays on top */
 }
 
 .slide-enter-active, .slide-leave-active {
@@ -244,31 +229,25 @@ export default {
 }
 
 .ml-64 {
-  margin-left: 30rem; /* Width of the sidebar */
+  margin-left: 16rem; /* Matches sidebar width */
 }
 
-.max-w-2xl {
-  max-width: 32rem; /* Reduced width for the main content */
+.flex-1 {
+  z-index: 900; /* Ensures content is below the sidebar but above other elements */
 }
 
-.overflow-y-auto {
-  overflow-y: auto; 
-}
+@media (max-width: 768px) {
+  .ml-64 {
+    margin-left: 0; /* Remove margin on smaller screens */
+  }
 
-.admin-dashboard {
-  overflow-y: auto;
-  max-height: 80vh;
-}
+  .sidebar {
+    width: 100%; /* Full width for mobile sidebar */
+  }
 
-.appointments {
-  margin-top: 1rem; /* Create space between the two sections */
-}
-
-.mb-6 {
-  margin-bottom: 1.5rem;
-}
-
-.mt-8 {
-  margin-top: 1rem;
 }
 </style>
+
+
+
+
