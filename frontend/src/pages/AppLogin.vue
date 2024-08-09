@@ -25,6 +25,8 @@
           Login
         </button>
       </form>
+      <p v-else>Redirecting to your dashboard...</p>
+
       <div class="flex flex-col space-y-4 mb-6 mt-4">
         <button @click="loginWithGoogle" class="w-full bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition duration-200 shadow-md">
           Login with Google
@@ -52,7 +54,7 @@ export default {
       email: '',
       password: '',
       errorMessage: '',
-      isLoggedIn: false,
+      isLoggedIn: localStorage.getItem('token') ? true : false,
     };
   },
   methods: {
@@ -83,14 +85,33 @@ export default {
     loginWithGoogle() {
       window.location.href = 'http://localhost:5000/auth/google';
     },
-    loginWithFacebook() {
+    loginWithFacebook() { 
       window.location.href = 'http://localhost:5000/auth/facebook';
+    },
+    logout() {
+    // Clear user data and token from localStorage
+    localStorage.removeItem('token');
+    localStorage.removeItem('role');
+    localStorage.removeItem('user');
+
+    // Update login state
+    this.isLoggedIn = false;
+    this.$router.push('/login');
     }
   },
   mounted() {
     const token = localStorage.getItem('token');
+    const role = localStorage.getItem('role');
+
     if (token) {
       this.isLoggedIn = true;
+
+      //Redirect based on role 
+      if (role === 'admin') {
+        this.$router.push('/AdminDashboard');
+      } else {
+        this.$router.push('/UserDashboard'); 
+      }
       this.isLoggedIn = !!localStorage.getItem('token');
     } else {
       localStorage.removeItem('user'); // Clear any potentially invalid user data
