@@ -1,6 +1,6 @@
 <template>
-  <div class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-green-400 to-blue-500">
-    <h1 :class="{'drop-animation': messageVisible, 'drop-in': !messageVisible}" class="text-4xl font-bold text-white mb-8">
+  <div class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-green-400 to-blue-500 px-4">
+    <h1 :class="{'drop-animation': messageVisible, 'drop-in': !messageVisible}" class="text-center text-4xl md:text-5xl font-bold text-white mb-8">
       Welcome to Appointment Management System
     </h1>
     <div class="space-x-4">
