@@ -1,24 +1,13 @@
-# frontend
+**<u>1. Setting up the Frontend</u>**  
+**npm install -g @vue/cli:** Global installtion of CLI  
+**vue create frontend:** Create new Vue project(frontend)  
+**cd frontend: npm run serve** - start the developement server
 
-## Project setup
-```
-npm install
-```
+**Installed Tailwind CSS for purposes of styling**  
+**npm install -D tailwindcss postcss autoprefixe:** to install Tailwind CSS and its dependencies.  
+**npx tailwindcss init -p:** Initialize Tailwind CSS
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+**Set Up Routing**  
+Vue Router was used for navigation between components: Login.vue, Register.vue, Dashboard.vue and Calender.vue.  
+**npm install vue-router@4:** to install Vue Router
+Configured Vue Router

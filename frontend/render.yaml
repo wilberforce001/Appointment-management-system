@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: appointment-management-system
+    staticPublishPath: dist
+    buildCommand: npm run build
+    routes:
+      - type: rewrite
+        source: /.*  # Match all routes
+        destination: /index.html  # Serve index.html for all routes
