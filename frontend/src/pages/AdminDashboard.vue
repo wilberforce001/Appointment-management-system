@@ -33,6 +33,7 @@ export default {
     const errorMessage = ref('');
     const successMessage = ref(''); 
     const selectedAppointment = ref(null);
+    const isSidebarOpen = ref(false);
     const isCalendarOpen = ref(false);
 
     const fetchAppointments = async () => {
@@ -95,6 +96,10 @@ export default {
       isDesktop.value = window.innerWidth >= 768;
     };
 
+    const toggleSidebar = () => {
+      isSidebarOpen.value = !isSidebarOpen.value;
+    }
+
     const logout = () => {
       localStorage.removeItem('token');
       router.push('/login');
@@ -120,6 +125,8 @@ export default {
       addTimeSlot,
       changeStatus,
       selectAppointment,
+      isSidebarOpen,
+      toggleSidebar,
       isCalendarOpen,
       formFields,
       logout,
@@ -135,7 +142,11 @@ export default {
       <button @click="toggleSidebar" class="toggle-button">
         ☰
       </button>
-      <h2 class="text-xl font-bold mb-4">Appointments</h2>
+      <div :class="['sidebar', isSidebarOpen ? 'show' : 'hide']">
+      </div>
+      <div class="flex items-center">
+        <h2 class="text-xl font-bold mb-4">Appointments</h2>
+      </div>
       <ul class="space-y-2">
         <li
           v-for="appointment in appointments"
@@ -220,13 +231,16 @@ export default {
 
 <style scoped>
 .sidebar {
-  width: 250px;
+  width: 16rem;
   height: 100vh;
   position: fixed;
   left: 0;
   top: 0;
   z-index: 10;
   transform: translateX(0);
+  background-color: #343a40;
+  padding-top: 4rem;
+  transition: transform 0.3s ease-in-out;
 }
 
 .sidebar.show {
@@ -239,15 +253,31 @@ export default {
   transition: transform 0.3s ease-in-out;
 }
 
-.toggle-button {
-  position: absolute;
-  top: 20px;
-  right: -20px;
-  background: #333;
+.sidebar a {
   color: white;
-  padding: 5px;
-  border-radius: 50%;
+  display: block;
+  padding: 1rem;
+  text-decoration: none;
+}
+
+.sidebar a:hover {
+  background-color: #374151;
+}
+
+.toggle-button {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 10;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  background-color: rgb(163, 141, 141);
   cursor: pointer;
+}
+
+.toggle-button:hover {
+  background-color: #f0f0f0;
 }
 
 .main-content {
