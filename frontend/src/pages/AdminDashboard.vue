@@ -27,7 +27,7 @@ export default {
     ]);
 
     const isDesktop = ref(window.innerWidth >= 768);
-    const showSidebar = ref(isDesktop.value); // Sidebar visibility
+    const showSidebar = ref(true); // Sidebar visibility
     const errorMessage = ref('');
     const successMessage = ref(''); 
     const selectedAppointment = ref(null);
@@ -80,19 +80,20 @@ export default {
 
     const selectAppointment = (appointment) => {
       selectedAppointment.value = appointment;
-      if (!isDesktop.value) {
-        showSidebar.value = false;
-      }
+      showSidebar.value = true;
     };
 
     const handleResize = () => {
       isDesktop.value = window.innerWidth >= 768;
-      showSidebar.value = isDesktop.value; // Automatically show/hide sidebar based on screen size
     };
 
     const toggleSidebar = () => {
       showSidebar.value = !showSidebar.value;
     };
+
+    const toggleCalendar = () => {
+      isCalendarOpen.value = !isCalendarOpen.value;
+    }
 
     const logout = () => {
       localStorage.removeItem('token');
@@ -121,7 +122,9 @@ export default {
       selectAppointment,
       showSidebar,
       toggleSidebar,
+      isDesktop,
       isCalendarOpen,
+      toggleCalendar,
       formFields,
       logout,
     };
@@ -133,7 +136,7 @@ export default {
   <div class="flex min-h-screen">
     <!--Sidebar-->
     <div :class="['sidebar text-white shadow-md transition-transform duration-300', { 'translate-x-0': showSidebar, '-translate-x-full': !showSidebar }]">
-      <div class="p-4 flex items-center ">
+      <div class="p-4 flex items-center">
         <h2 class="text-xl font-bold mb-0">Dashboard</h2>
       </div>
       <div class="flex flex-col overflow-y-auto max-h-[80vh]">
@@ -149,11 +152,11 @@ export default {
             <span class="text-gray-300">{{ appointment.date }}</span>
           </li>
         </ul>
-        <button @click="toggleCalendar" class="w-auto mx-auto mt-4 bg-sky-600 py-2 px-6 rounded-md text-center hover:bg-sky-700">
+        <button @click="toggleCalendar" class="w-32 ml-5 mt-4 bg-sky-600 py-2 px-6 rounded-md text-center hover:bg-sky-700">
           Calendar
         </button>
-        <button @click="logout" class="w-auto mx-auto mt-4 bg-red-600 py-2 px-8 rounded-md text-center hover:bg-red-700">
-          <span class="font-medium">Logout</span>
+        <button @click="logout" class="w-32 ml-5 mt-4 bg-red-600 py-2 px-4 rounded-md text-center hover:bg-red-700">
+          <span class="font-medium">Logout</span> 
         </button>
       </div>
     </div>
@@ -210,16 +213,12 @@ export default {
         <div v-if="isCalendarOpen" class="absolute inset-0 flex justify-center items-center bg-white bg-opacity-90">
           <div class="w-full max-w-screen-lg p-4">
             <AppointmentCalendar />
-            <button @click="toggleCalendar" class="absolute top-0 right-0 p-2 m-4 bg-gray-800 text-white rounded-full hover:bg-gray-700 focus:outline-none">
-              X
-            </button>
           </div>
         </div>
       </transition>
 
       <!-- Sidebar Toggle Button -->
       <button
-        v-if="!isDesktop"
         @click="toggleSidebar"
         class="fixed top-2 left-2 z-20 bg-gray-900 text-white p-2 rounded-md"
       >
@@ -230,7 +229,6 @@ export default {
     </div>
   </div>
 </template>
-
 
 <style scoped>
 .sidebar {
@@ -245,7 +243,7 @@ export default {
   transition: transform 0.3s ease-in-out;
 }
 
-.sidebar.translate-x-full {
+.sidebar.-translate-x-full {
   transform: translateX(-100%);
 }
 
@@ -264,6 +262,10 @@ export default {
 
 .main-content h2 {
   margin-bottom: 10px;
+}
+
+.main-content.ml-0 {
+  margin-left: 0;
 }
 
 .appointment-container {
@@ -306,6 +308,10 @@ export default {
     width: 100%;
     height: auto;
     position: relative;
+    transform: translateX(0);
+  }
+
+  .sidebar.translate-x-0 {
     transform: translateX(0);
   }
 
