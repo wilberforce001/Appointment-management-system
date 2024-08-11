@@ -1,6 +1,6 @@
 <script>
 import { useRouter } from 'vue-router';
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, watch } from 'vue';
 import ApiService from '../services/ApiService.js';
 import AppointmentCalendar from './AppointmentCalendar.vue';
 
@@ -89,6 +89,9 @@ export default {
 
     const toggleSidebar = () => {
       showSidebar.value = !showSidebar.value;
+        if (!isDesktop.value) {
+        document.body.classList.toggle('sidebar-open');
+      }
     };
 
     const toggleCalendar = () => {
@@ -107,6 +110,16 @@ export default {
 
     onUnmounted(() => {
       window.removeEventListener('resize', handleResize);
+    });
+
+      // Watch for changes to isDesktop
+    watch(isDesktop, (newVal) => {
+      if(newVal) {
+        showSidebar.value = true;
+      } else {
+        showSidebar.value = false;
+        document.body.classList.remove('sidebar-open');
+      }
     });
 
     return {
@@ -135,7 +148,7 @@ export default {
 <template>
   <div class="flex min-h-screen">
     <!--Sidebar-->
-    <div :class="['sidebar text-white shadow-md transition-transform duration-300', { 'translate-x-0': showSidebar, '-translate-x-full': !showSidebar }]">
+    <div :class="['sidebar text-white shadow-md transition-transform duration-300', { 'translate-x-0': showSidebar, '-translate-x-full hidden': !showSidebar }]">
       <div class="p-4 flex items-center">
         <h2 class="text-xl font-bold mb-0">Dashboard</h2>
       </div>
@@ -162,7 +175,7 @@ export default {
     </div>
     
     <!-- Main Content -->
-    <div :class="['main-content flex-1 p-4 bg-gray-100 relative', {'ml-16': showSidebar, 'ml-0': !showSidebar}]">
+    <div :class="['main-content flex-1 p-4 bg-gray-100 relative', {'ml-16': showSidebar, 'full-width': !showSidebar}]">
       <!-- Header -->
       <h2 class="text-2xl font-bold text-gray-800 text-center">Admin Dashboard</h2>
 
@@ -240,7 +253,7 @@ export default {
   z-index: 10;
   background-color: #343a40;
   padding-top: 4rem;
-  transition: transform 0.3s ease-in-out;
+  transition: transform 0.3s ease-in-out, width 0.3s ease-in-out;
 }
 
 .sidebar.-translate-x-full {
@@ -251,7 +264,12 @@ export default {
   transform: translateX(0);
 }
 
+.sidebar.hidden {
+  width: 0;
+}
+
 .main-content {
+  flex: 1;
   margin-left: 16rem; /* Reserve space for the sidebar */
   transition: margin-left 0.3s ease-in-out;
   padding: 20px;
@@ -266,6 +284,11 @@ export default {
 
 .main-content.ml-0 {
   margin-left: 0;
+}
+
+.main-content.full-width {
+  margin-left: 0;
+  width: 100%;
 }
 
 .appointment-container {
@@ -308,6 +331,7 @@ export default {
     width: 100%;
     height: auto;
     position: relative;
+    /*left: -100%;*/
     transform: translateX(0);
   }
 
