@@ -21,6 +21,8 @@ export default {
       },
       isSidebarOpen: true, // Default to true for the sidebar to be open initially
       isCalendarOpen: false,
+      successMessage: '',
+      errorMessage: '',
     };
   },
   computed: {
@@ -110,19 +112,23 @@ export default {
         console.error('Reschedule appointment failed:', error.response ? error.response.data : error.message);
       }
     },
+    openRescheduleModal() {
+      this.showRescheduleModal = true;
+    },
     closeModal() {
       this.showRescheduleModal = false;
     },
     toggleSidebar() {
       this.isSidebarOpen = !this.isSidebarOpen;
-      if (this.isSidebarOpen) {
-        this.$refs.mainContent.style.marginLeft = '16rem';
-      } else {
-        this.$refs.mainContent.style.marginLeft = '0';
-      }
     },
     toggleCalendar() {
       this.isCalendarOpen = !this.isCalendarOpen;
+    },
+    showSuccessMessage(message) {
+      this.successMessage = message;
+    },
+    showerrorMessage(message) {
+      this.errorMessage = message;
     },
     logout() {
       localStorage.removeItem('token');
@@ -141,213 +147,206 @@ export default {
 </script>
 
 <template>
-  <div class="flex flex-col md:flex-row min-h-screen bg-gray-100 relative">
-    <button @click="toggleSidebar" class="toggle-button">
-      ☰
-    </button>
-    <div class="flex">
-      <!-- Sidebar -->
-      <div :class="['sidebar bg-sky-500 text-white shadow-md transition-transform duration-300 md:w-64', { 'translate-x-0': isSidebarOpen, '-translate-x-full': !isSidebarOpen }]">
-        <div class="p-4 flex items-center overflow-hidden">
-          <h2 class="text-2xl font-bold truncate">Dashboard</h2>
-        </div>
-        <div class="flex flex-col overflow-hidden">
-          <h3 class="appointments-heading text-lg font-bold mb-0 ml-5 truncate">Appointments</h3>
-          <div class="overflow-y-auto" style="max-height: 60vh;">
-            <ul class="space-y-0">
-            <li
-              v-for="appointment in appointments"
-              :key="appointment._id"
-              @click="selectAppointment(appointment)"
-              class="p-2 hover:bg-sky-400 cursor-pointer flex items-center space-x-2 truncate"
-            >
-              <span class="font-medium truncate ml-4">{{ appointment.title }}</span>
-            </li>
-          </ul>
-          </div>
-          <!-- Button to toggle the calendar visibility -->
-          <div class="mt-2 flex flex-wrap space-x-2">
-            <button @click="toggleCalendar" class="w-32 mt-2 md:mt-0 ml-5 bg-sky-600 py-2 px-2 rounded-md text-center hover:bg-sky-700 md:w-auto">
-              Calendar
-            </button>
-            <button @click="logout" class="w-32 mt-4 md:mt-0 ml-5 bg-red-600 py-2 px-2 rounded-md text-center hover:bg-sky-700 md:w-auto">
-              <span class="font-medium">Logout</span>
-            </button>
-          </div>
-        </div>
+  <div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <div :class="['sidebar bg-sky-500 text-white shadow-md transition-transform duration-300', { 'translate-x-0': isSidebarOpen, '-translate-x-full hidden': !isSidebarOpen }]">
+      <div class="p-4 flex items-center">
+        <h2 class="text-2xl font-bold truncate">Dashboard</h2>
       </div>
+      <div class="flex flex-col overflow-y-auto max-h-[80vh]">
+        <h3 class="appointments-heading text-lg font-bold mb-2 ml-5">Appointments</h3>
+        <ul class="space-y-2">
+          <li
+            v-for="appointment in appointments"
+            :key="appointment._id"
+            class="p-2 ml-5 bg-sky-600 rounded hover:bg-sky-500 cursor-pointer"
+            @click="selectAppointment(appointment)"
+          >
+            <span class="font-medium">{{ appointment.title }}</span>
+          </li>
+        </ul>
+        <button @click="toggleCalendar" class="w-32 ml-5 mt-4 bg-sky-600 py-2 px-2 rounded-md text-center hover:bg-sky-700">
+          Calendar
+        </button>
+        <button @click="logout" class="w-32 ml-5 mt-4 bg-red-600 py-2 px-4 rounded-md text-center hover:bg-red-700">
+          <span class="font-medium">Logout</span> 
+        </button>
+      </div>
+    </div>
 
-      <!-- Main Content Area -->
-      <div ref="mainContent" :class="['main-content', 'flex-1', 'relative', 'flex-grow', 'flex-shrink', { 'md:ml-64': isSidebarOpen }, 'transition-margin', 'duration-300']">
-        <div class="relative flex-1 p-6 mx-auto">
-          <form @submit.prevent="createAppointment" class="relative space-y-2 bg-white p-6 rounded-lg shadow-md w-full mx-auto">
-            <input
-              v-model="newAppointment.title"
-              type="text"
-              placeholder="Title"
-              required
-              class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <input
-              v-model="newAppointment.description"
-              type="text"
-              placeholder="Description"
-              class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <input
-              v-model="newAppointment.date"
-              type="date"
-              placeholder="Date"
-              required
-              class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              :min="today"
-              :max="oneWeekFromToday"
-            />
+    <!-- Main Content -->
+    <div :class="['main-content flex-1 p-4 bg-gray-100 relative', {'ml-16': isSidebarOpen, 'full-width': !isSidebarOpen}]">
+      <!-- Header -->
+      <h2 class="text-2xl font-bold text-gray-800 text-center">User Dashboard</h2>
+
+      <!-- Message Display -->
+      <div v-if="errorMessage" class="text-red-500 mb-2">{{ errorMessage }}</div>
+      <div v-if="successMessage" class="text-green-500 mb-2">{{ successMessage }}</div>
+
+      <!-- Appointment Form -->
+      <div class="appointment-container overflow-y-auto max-h-[80vh] p-4 bg-white shadow rounded-md mx-auto w-full md:w-3/4 lg:w-1/2">
+        <form @submit.prevent="createAppointment" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <input
+            v-model="newAppointment.title"
+            type="text"
+            placeholder="Title"
+            required
+            class="p-2 border rounded w-full"
+          />
+          <input
+            v-model="newAppointment.description"
+            type="text"
+            placeholder="Description"
+            class="p-2 border rounded w-full"
+          />
+          <input
+            v-model="newAppointment.date"
+            type="date"
+            placeholder="Date"
+            required
+            class="p-2 border rounded w-full"
+            :min="today"
+            :max="oneWeekFromToday"
+          />
+          <div class="col-span-2">
             <button
               type="submit"
-              class="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="bg-blue-500 text-white p-2 rounded w-full border border-blue-700"
             >
               Create Appointment
             </button>
-          </form>
+          </div>
+        </form>
 
-          <!-- Appointment Details -->
-          <div v-if="selectedAppointment" class="bg-white p-6 rounded-lg shadow-md w-full mt-3">
-            <h3 class="text-xl font-bold mb-4">Appointment Details</h3>
+        <!-- Appointment Details -->
+        <div v-if="selectedAppointment" class="mt-3">
+          <h3 class="text-xl font-semibold mb-2 text-gray-700 text-center">Appointment Details</h3>
+          <div class="p-4 bg-gray-300 rounded shadow-inner">
             <p><strong>Title:</strong> {{ selectedAppointment.title }}</p>
             <p><strong>Description:</strong> {{ selectedAppointment.description }}</p>
             <p><strong>Date:</strong> {{ selectedAppointment.date }}</p>
-            <div class="mt-4 flex flex-wrap space-x-2">
-              <button @click="rescheduleAppointment(selectedAppointment)" class="bg-yellow-500 text-white py-2 px-4 rounded-md hover:bg-yellow-600 md:w-auto">
+            <div class="mt-4">
+              <button @click="rescheduleAppointment(selectedAppointment)" class="bg-yellow-500 text-white p-2 rounded border border-yellow-700">
                 Reschedule
               </button>
-              <button @click="cancelAppointment(selectedAppointment._id)" class="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 md:w-auto mt-2 md:mt-0">
+              <button @click="cancelAppointment(selectedAppointment._id)" class="bg-red-500 text-white p-2 rounded border border-red-700 ml-4">
                 Cancel
               </button>
             </div>
           </div>
-
-          <!-- Reschedule Modal -->
-          <div v-if="showRescheduleModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center" @click="closeModal">
-            <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm" @click.stop style="top: 10%; position: absolute;">
-              <h3 class="text-lg font-bold mb-4">Reschedule Appointment</h3>
-              <form @submit.prevent="submitReschedule">
-                <input
-                  v-model="rescheduleAppointmentData.date"
-                  type="date"
-                  required
-                  class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  :min="today"
-                  :max="oneWeekFromToday"
-                />
-                <button
-                  type="submit"
-                  class="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 mt-4"
-                >
-                  Reschedule
-                </button>
-              </form>
-            </div>
-          </div>
-
-          <!-- Conditionally render the calendar -->
-          <div v-if="isCalendarOpen" class="w-full flex justify-center mt-6">
-            <AppointmentCalendar @close-calendar="toggleCalendar" /> 
-          </div>       
         </div>
       </div>
+
+      <!-- Conditionally render the calendar -->
+      <div v-if="isCalendarOpen" class="w-full flex justify-center mt-6">
+        <AppointmentCalendar @close-calendar="toggleCalendar" /> 
+      </div> 
+
+      <!-- Sidebar Toggle Button -->
+      <button
+        @click="toggleSidebar"
+        class="fixed top-2 left-2 z-20 bg-gray-900 text-white p-2 rounded-md"
+      > ☰
+      </button>
     </div>
   </div>
 </template>
 
 <style scoped>
-
-.modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  max-width: 90%;
-  width: 100%;
-  padding: 1rem;
-  z-index: 900;
-}
-.toggle-button {
-  position: fixed;
-  top: 1rem;
-  left: 1rem;
-  z-index: 1000;
-  background-color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 0.25rem;
-  cursor: pointer;
-}
-.toggle-button:hover {
-  background-color: #f0f0f0;
-}
 .sidebar {
   width: 16rem;
   height: 100vh;
   position: fixed;
-  top: 0;
   left: 0;
+  top: 0;
+  z-index: 10;
+  background-color: #343a40;
   padding-top: 4rem;
-  background-color: #1f2937;
-  transition: transform 0.3s ease-in-out;
+  transition: transform 0.3s ease-in-out, width 0.3s ease-in-out;
 }
-.sidebar a {
-  color: white;
-  display: block;
-  padding: 1rem;
-  text-decoration: none;
+
+.sidebar.-translate-x-full {
+  transform: translateX(-100%);
 }
-.sidebar a:hover {
-  background-color: #374151;
+
+.sidebar.translate-x-0 {
+  transform: translateX(0);
 }
-.form-container,
-.appointment-details {
-  max-width: 1200px;
-  margin: auto;
-  padding: 20px;
-}
-.form-container input,
-.form-container textarea,
-.form-container button {
-  width: 100%;
-  margin-bottom: 10px;
+
+.sidebar.hidden {
+  width: 0;
 }
 
 .main-content {
-  height: calc(100vh - 4rem); /* Adjust height based on your layout */
-  overflow-y: auto; /* Enable vertical scrolling */
-  margin-left: 16rem;
-  transition: margin-left 0.3s;
+  flex: 1;
+  margin-left: 16rem; /* Reserve space for the sidebar */
+  transition: margin-left 0.3s ease-in-out;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  flex-grow: 1;
-  flex-shrink: 1;
-  position: relative;
-  z-index: 500;
 }
 
+.main-content h2 {
+  margin-bottom: 5px;
+  top: 20%;
+} 
 
-@media (max-width: 768px) {
+.main-content.ml-0 {
+  margin-left: 0;
+}
+
+.main-content.full-width {
+  margin-left: 0;
+  width: 100%;
+}
+
+.appointment-container {
+  width: 100%;
+  max-width: 800px;
+  margin-top: 10px;
+  background: white;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.toggle-button {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 10;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  background-color: white;
+  cursor: pointer;
+}
+
+.toggle-button:hover {
+  background-color: #f0f0f0;
+}
+
+@media screen and (max-width: 767px) {
   .sidebar {
-    width: 8rem;
+    width: 10rem;
+    height: auto;
+    position: relative;
+    transform: translateX(0);
   }
-  .main-content {
-    margin-left: 8rem;
-  }
-}
 
-@media (min-width: 768px) {
-  .modal {
-    max-width: 500px;
+  .sidebar.translate-x-0 {
+    transform: translateX(0);
   }
+
   .main-content {
-    margin-left: 2rem;
+    margin-left: 0;
+    padding: 10px;
+    max-width: 100%;
+  } 
+
+  .appointment-container {
+    padding: 15px;
   }
 }
 </style>
