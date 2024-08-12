@@ -165,7 +165,7 @@ export default {
             <span class="text-gray-300">{{ appointment.date }}</span>
           </li>
         </ul>
-        <button @click="toggleCalendar" class="w-32 ml-5 mt-4 bg-sky-600 py-2 px-6 rounded-md text-center hover:bg-sky-700">
+        <button @click="toggleCalendar" class="w-32 ml-5 mt-4 bg-sky-600 py-2 px-2 rounded-md text-center hover:bg-sky-700">
           Calendar
         </button>
         <button @click="logout" class="w-32 ml-5 mt-4 bg-red-600 py-2 px-4 rounded-md text-center hover:bg-red-700">
@@ -328,7 +328,7 @@ export default {
 
 @media screen and (max-width: 767px) {
   .sidebar {
-    width: 100%;
+    width: 10rem;
     height: auto;
     position: relative;
     /*left: -100%;*/

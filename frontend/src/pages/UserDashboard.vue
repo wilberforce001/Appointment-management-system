@@ -115,6 +115,11 @@ export default {
     },
     toggleSidebar() {
       this.isSidebarOpen = !this.isSidebarOpen;
+      if (this.isSidebarOpen) {
+        this.$refs.mainContent.style.marginLeft = '16rem';
+      } else {
+        this.$refs.mainContent.style.marginLeft = '0';
+      }
     },
     toggleCalendar() {
       this.isCalendarOpen = !this.isCalendarOpen;
@@ -136,19 +141,20 @@ export default {
 </script>
 
 <template>
-  <div class="flex flex-col min-h-screen bg-gray-100 relative">
+  <div class="flex flex-col md:flex-row min-h-screen bg-gray-100 relative">
     <button @click="toggleSidebar" class="toggle-button">
       ☰
     </button>
     <div class="flex">
       <!-- Sidebar -->
-      <div :class="['sidebar bg-sky-500 text-white shadow-md transition-transform duration-300', { 'translate-x-0': isSidebarOpen, '-translate-x-full': !isSidebarOpen }]">
-        <div class="p-4 flex items-center">
-          <h2 class="text-2xl font-bold">Dashboard</h2>
+      <div :class="['sidebar bg-sky-500 text-white shadow-md transition-transform duration-300 md:w-64', { 'translate-x-0': isSidebarOpen, '-translate-x-full': !isSidebarOpen }]">
+        <div class="p-4 flex items-center overflow-hidden">
+          <h2 class="text-2xl font-bold truncate">Dashboard</h2>
         </div>
-        <div class="flex flex-col">
-          <h3 class="appointments-heading text-lg font-bold mb-0 ml-5">Appointments</h3>
-          <ul class="space-y-0">
+        <div class="flex flex-col overflow-hidden">
+          <h3 class="appointments-heading text-lg font-bold mb-0 ml-5 truncate">Appointments</h3>
+          <div class="overflow-y-auto" style="max-height: 60vh;">
+            <ul class="space-y-0">
             <li
               v-for="appointment in appointments"
               :key="appointment._id"
@@ -158,19 +164,22 @@ export default {
               <span class="font-medium truncate ml-4">{{ appointment.title }}</span>
             </li>
           </ul>
+          </div>
           <!-- Button to toggle the calendar visibility -->
-          <button @click="toggleCalendar" class="w-32 mt-4 ml-5 bg-sky-600 py-2 px-2 rounded-md text-center hover:bg-sky-700">
-            Calendar
-          </button>
-          <button @click="logout" class="w-32 mt-4 ml-5 bg-red-600 py-2 px-2 rounded-md text-center hover:bg-sky-700">
-            <span class="font-medium">Logout</span>
-          </button>
+          <div class="mt-2 flex flex-wrap space-x-2">
+            <button @click="toggleCalendar" class="w-32 mt-2 md:mt-0 ml-5 bg-sky-600 py-2 px-2 rounded-md text-center hover:bg-sky-700 md:w-auto">
+              Calendar
+            </button>
+            <button @click="logout" class="w-32 mt-4 md:mt-0 ml-5 bg-red-600 py-2 px-2 rounded-md text-center hover:bg-sky-700 md:w-auto">
+              <span class="font-medium">Logout</span>
+            </button>
+          </div>
         </div>
       </div>
 
       <!-- Main Content Area -->
-      <div class="main-content fixed flex-1 flex justify-center ml-64" :class="[isSidebarOpen ? 'ml-72 lg:ml-96 xl:ml-[32rem] 2xl:ml-[36rem]' : '']">
-        <div class="relative w-full max-w-lg p-6">
+      <div ref="mainContent" :class="['main-content', 'flex-grow', 'flex-shrink', { 'md:ml-64': isSidebarOpen }, 'transition-margin', 'duration-300']">
+        <div class="relative flex-1 p-6 mx-auto">
           <form @submit.prevent="createAppointment" class="relative space-y-2 bg-white p-6 rounded-lg shadow-md w-full mx-auto">
             <input
               v-model="newAppointment.title"
@@ -208,11 +217,11 @@ export default {
             <p><strong>Title:</strong> {{ selectedAppointment.title }}</p>
             <p><strong>Description:</strong> {{ selectedAppointment.description }}</p>
             <p><strong>Date:</strong> {{ selectedAppointment.date }}</p>
-            <div class="mt-4 flex space-x-2">
-              <button @click="rescheduleAppointment(selectedAppointment)" class="bg-yellow-500 text-white py-2 px-4 rounded-md hover:bg-yellow-600">
+            <div class="mt-4 flex flex-wrap space-x-2">
+              <button @click="rescheduleAppointment(selectedAppointment)" class="bg-yellow-500 text-white py-2 px-4 rounded-md hover:bg-yellow-600 md:w-auto">
                 Reschedule
               </button>
-              <button @click="cancelAppointment(selectedAppointment._id)" class="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600">
+              <button @click="cancelAppointment(selectedAppointment._id)" class="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 md:w-auto mt-2 md:mt-0">
                 Cancel
               </button>
             </div>
@@ -249,12 +258,26 @@ export default {
       </div>
     </div>
   </div>
-</template><style scoped>
+</template>
+
+<style scoped>
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 90%;
+  width: 100%;
+  padding: 1rem;
+  z-index: 900;
+  position: fixed;
+}
 .toggle-button {
   position: fixed;
   top: 1rem;
   left: 1rem;
-  z-index: 10;
+  z-index: 1000;
   background-color: white;
   border: none;
   padding: 0.5rem 1rem;
@@ -299,27 +322,35 @@ export default {
 .main-content {
   height: calc(100vh - 4rem); /* Adjust height based on your layout */
   overflow-y: auto; /* Enable vertical scrolling */
-  transition:margin-left 0.3s ease;
+  margin-left: 16rem;
+  transition: margin-left 0.3s ease;
+  flex-grow: 1;
+  flex-shrink: 1;
+  position: relative;
+  z-index: 500;
 }
 
 @media (max-width: 768px) {
-    .main-content {
-      margin-left: 16rem;
-    }
+  .sidebar {
+    width: 8rem;
   }
-
-.sidebar {
-  height: 100vh; /* Full viewport height */
-  overflow-y: auto; /* Enable vertical scrolling */
+  .main-content {
+    margin-left: 4rem;
+  }
 }
 
-@media (max-width: 768px) {
-    .sidebar {
-      width: 16rem;
-    }
+@media (min-width: 768px) {
+  .modal {
+    max-width: 500px;
   }
-
+  .main-content {
+    margin-left: 2rem;
+  }
+}
 </style>
+
+
+
 
 
 
