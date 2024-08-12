@@ -279,8 +279,9 @@ export default {
 }
 
 .main-content h2 {
-  margin-bottom: 10px;
-}
+  margin-bottom: 5px;
+  top: 20%;
+} 
 
 .main-content.ml-0 {
   margin-left: 0;
@@ -294,7 +295,7 @@ export default {
 .appointment-container {
   width: 100%;
   max-width: 800px;
-  margin-top: 20px;
+  margin-top: 10px;
   background: white;
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -343,7 +344,7 @@ export default {
     margin-left: 0;
     padding: 10px;
     max-width: 100%;
-  }
+  } 
 
   .appointment-container {
     padding: 15px;

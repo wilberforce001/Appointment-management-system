@@ -178,7 +178,7 @@ export default {
       </div>
 
       <!-- Main Content Area -->
-      <div ref="mainContent" :class="['main-content', 'flex-grow', 'flex-shrink', { 'md:ml-64': isSidebarOpen }, 'transition-margin', 'duration-300']">
+      <div ref="mainContent" :class="['main-content', 'flex-1', 'relative', 'flex-grow', 'flex-shrink', { 'md:ml-64': isSidebarOpen }, 'transition-margin', 'duration-300']">
         <div class="relative flex-1 p-6 mx-auto">
           <form @submit.prevent="createAppointment" class="relative space-y-2 bg-white p-6 rounded-lg shadow-md w-full mx-auto">
             <input
@@ -271,7 +271,6 @@ export default {
   width: 100%;
   padding: 1rem;
   z-index: 900;
-  position: fixed;
 }
 .toggle-button {
   position: fixed;
@@ -323,19 +322,23 @@ export default {
   height: calc(100vh - 4rem); /* Adjust height based on your layout */
   overflow-y: auto; /* Enable vertical scrolling */
   margin-left: 16rem;
-  transition: margin-left 0.3s ease;
+  transition: margin-left 0.3s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   flex-grow: 1;
   flex-shrink: 1;
   position: relative;
   z-index: 500;
 }
 
+
 @media (max-width: 768px) {
   .sidebar {
     width: 8rem;
   }
   .main-content {
-    margin-left: 4rem;
+    margin-left: 8rem;
   }
 }
 
