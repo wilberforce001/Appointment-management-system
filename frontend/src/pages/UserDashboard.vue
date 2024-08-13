@@ -15,6 +15,7 @@ export default {
       appointments: [],
       selectedAppointment: null,
       showRescheduleModal: false,
+      rescheduleDate: '',
       rescheduleAppointmentData: {
         id: '',
         date: '',
@@ -88,10 +89,10 @@ export default {
       console.log('Selected appointment;', this.selectedAppointment);
     },
     rescheduleAppointment(appointment) {
-    console.log('Reschedule clicked:', appointment);
-      this.rescheduleAppointmentData.id = appointment._id;
-      this.rescheduleAppointmentData.date = appointment.date;
+     this.rescheduleAppointmentData.id = appointment._id;
+     this.rescheduleAppointmentData.date = appointment.date;
       this.showRescheduleModal = true;
+      this.selectedAppointment = appointment;
     },
     async submitReschedule() {
       try {
@@ -115,6 +116,8 @@ export default {
       }
     },
     openRescheduleModal() {
+      this.rescheduleAppointmentData.id = this.selectedAppointment._id;
+      this.rescheduleAppointmentData.date = this.selectedAppointment.date;
       this.showRescheduleModal = true;
     },
     closeModal() {
@@ -227,13 +230,37 @@ export default {
             <p><strong>Title:</strong> {{ selectedAppointment.title }}</p>
             <p><strong>Description:</strong> {{ selectedAppointment.description }}</p>
             <p><strong>Date:</strong> {{ selectedAppointment.date }}</p>
+
+            <!-- Reschedule and Cancel Buttons -->
             <div class="mt-4">
-              <button @click="rescheduleAppointment(selectedAppointment)" class="bg-yellow-500 text-white p-2 rounded border border-yellow-700">
+              <button @click="openRescheduleModal" class="bg-yellow-500 text-white p-2 rounded border border-yellow-700">
                 Reschedule
               </button>
               <button @click="cancelAppointment(selectedAppointment._id)" class="bg-red-500 text-white p-2 rounded border border-red-700 ml-4">
                 Cancel
               </button>
+            </div>
+          </div>
+
+          <!-- Modal for Reschedule -->
+          <div v-if="showRescheduleModal" class="modal">
+            <!-- Modal content -->
+            <div class="modal-content">
+              <span class="close" @click="closeModal">&times;</span>
+              <h2>Reschedule Appointment</h2>
+              <form @submit.prevent="submitReschedule">
+                <label for="newDate">New Date:</label>
+                <input
+                  type="date"
+                  v-model="rescheduleAppointmentData.date"
+                  :min="today"
+                  :max="oneWeekFromToday"
+                  required
+                />
+          <div class="modal-actions mt-4">
+            <button type="submit" class="bg-blue-500 text-white p-2 rounded">Confirm</button>
+          </div>
+              </form>
             </div>
           </div>
         </div>
@@ -254,7 +281,44 @@ export default {
   </div>
 </template>
 
-<style scoped>
+<style scoped> 
+.modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color:rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 300px;
+  position: relative;
+  text-align: center;
+}
+
+.close {
+  position: absolute;
+  top: 5px;
+  right: 15px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  cursor: pointer;
+}
+
+.close:hover {
+  color: red;
+}
+
 .sidebar {
   width: 16rem;
   height: 100vh;
