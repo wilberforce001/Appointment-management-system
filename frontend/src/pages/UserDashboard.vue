@@ -222,12 +222,12 @@ export default {
             </button>
           </div>
         </form>
-
-        <!-- Appointment Details -->
-        <div v-if="selectedAppointment" class="mt-3">
+      </div>
+              <!-- Appointment Details -->
+        <div v-if="selectedAppointment" class="appointment-details">
           <h3 class="text-xl font-semibold mb-2 text-gray-700 text-center">Appointment Details</h3>
           <div class="p-4 bg-gray-300 rounded shadow-inner">
-            <p><strong>Title:</strong> {{ selectedAppointment.title }}</p>
+            <p><strong>Title:</strong> {{ selectedAppointment.title }}</p> 
             <p><strong>Description:</strong> {{ selectedAppointment.description }}</p>
             <p><strong>Date:</strong> {{ selectedAppointment.date }}</p>
 
@@ -264,7 +264,6 @@ export default {
             </div>
           </div>
         </div>
-      </div>
 
       <!-- Conditionally render the calendar -->
       <div v-if="isCalendarOpen" class="w-full flex justify-center mt-6">
@@ -289,7 +288,7 @@ export default {
   position: fixed;
   z-index: 1000;
   left: 0;
-  top: 0;
+  top: -30%;
   width: 100%;
   height: 100%;
   overflow: auto;
@@ -375,6 +374,20 @@ export default {
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
+}
+
+.appointment-details {
+  width: 100%;
+  max-width: 800px;
+  margin-top: 10px;
+  background: white;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.appointment-details h3 {
+  margin-top: 0;
 }
 
 .toggle-button {
