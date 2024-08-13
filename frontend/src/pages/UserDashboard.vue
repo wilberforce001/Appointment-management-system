@@ -85,8 +85,10 @@ export default {
     },
     selectAppointment(appointment) {
       this.selectedAppointment = appointment;
+      console.log('Selected appointment;', this.selectedAppointment);
     },
     rescheduleAppointment(appointment) {
+    console.log('Reschedule clicked:', appointment);
       this.rescheduleAppointmentData.id = appointment._id;
       this.rescheduleAppointmentData.date = appointment.date;
       this.showRescheduleModal = true;
@@ -159,7 +161,7 @@ export default {
           <li
             v-for="appointment in appointments"
             :key="appointment._id"
-            class="p-2 ml-5 bg-sky-600 rounded hover:bg-sky-500 cursor-pointer"
+            class="p-2 ml-5 bg-gray-900 rounded hover:bg-orange-500 cursor-pointer"
             @click="selectAppointment(appointment)"
           >
             <span class="font-medium">{{ appointment.title }}</span>
