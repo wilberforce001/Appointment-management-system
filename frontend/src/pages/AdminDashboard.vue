@@ -223,9 +223,9 @@ export default {
 
       <!-- Appointment Calendar -->
       <transition name="fade">
-        <div v-if="isCalendarOpen" class="absolute inset-0 flex justify-center items-center bg-white bg-opacity-90">
-          <div class="w-full max-w-screen-lg p-4">
-            <AppointmentCalendar />
+        <div v-if="isCalendarOpen" class="fixed overflow-y-auto max-h-[80vh] inset-0 flex justify-center items-center bg-gray-900 bg-opacity-75">
+          <div class="w-full max-w-screen-md h-3/4 max-h-screen bg-white rounded-lg shadow-lg p-4 relative">
+            <AppointmentCalendar @close-calendar="toggleCalendar" /> 
           </div>
         </div>
       </transition>
@@ -304,7 +304,7 @@ export default {
 
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.5s;
+  transition: opacity 0.5s ease;
 }
 .fade-enter-from,
 .fade-leave-to {
