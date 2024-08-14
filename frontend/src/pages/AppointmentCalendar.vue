@@ -157,11 +157,13 @@ export default defineComponent({
         </label>
         <div class="mt-4">
           <h3 class="font-bold">All Events ({{ currentEvents.length }})</h3>
-          <ul class="ml-4 list-disc">
+          <div class="events-list max-h-40 overflowy-auto">
+            <ul class="ml-4 list-disc">
             <li v-for="event in currentEvents" :key="event.id">
-              <b>{{ event.startStr }}</b> <i>{{ event.title }}</i>
+              <b>{{ event.startStr }}</b> <i>{{ event.title }}</i> 
             </li>
           </ul>
+          </div>
         </div>
       </div>
     </div>
@@ -188,6 +190,13 @@ export default defineComponent({
   background-color: #0ea5e9;
   color: white;
   padding-bottom: 1rem;
+  max-height: 57vh;
+  overflow-y: auto;
+} 
+
+.events-list {
+  max-height: 10rem;
+  overflow-y: auto;
 }
 
 h2 {
