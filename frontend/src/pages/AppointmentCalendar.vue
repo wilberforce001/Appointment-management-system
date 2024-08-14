@@ -136,33 +136,30 @@ export default defineComponent({
 </script>  
 
 <template>
-  <div class="flex min-h-screen bg-gray-100 relative">
-    <!-- Sidebar -->
-    <div :class="['sidebar bg-sky-500 text-white shadow-md transition-transform duration-300', { 'translate-x-0': isSidebarOpen, '-translate-x-full': !isSidebarOpen }]">
-      <div class="p-4 flex items-center">
-        <h2 class="text-2xl font-bold">Calendar</h2>
-      </div>
-      <div class="flex flex-col">
-        <h3 class="appointments-heading text-lg font-bold mb-0 ml-5">Instructions</h3>
-        <ul>
-          <li>Select dates and you will be prompted to create a new event</li>
+  <div class="flex flex-col min-h-screen bg-gray-100">
+    <!-- Top Bar -->
+    <div class="top-bar bg-sky-500 text-white p-4 shadow-md">
+      <h2 class="text-2xl font-bold">Calendar</h2>
+      <div class="mt-4">
+        <h3 class="appointments-heading text-lg font-bold">Instructions</h3>
+        <ul class="ml-4 list-disc">
+          <li>Select dates to create a new event</li>
           <li>Drag, drop, and resize events</li>
           <li>Click an event to delete it</li>
         </ul>
-        <label class="ml-5">
+        <label class="block mt-4">
           <input
-            type='checkbox'
-            :checked='calendarOptions.weekends'
-            @change='handleWeekendsToggle'
+            type="checkbox"
+            :checked="calendarOptions.weekends"
+            @change="handleWeekendsToggle"
           />
-          toggle weekends
+          Toggle weekends
         </label>
-        <div class="ml-5 mt-4">
-          <h2>All Events ({{ currentEvents.length }})</h2>
-          <ul>
-            <li v-for='event in currentEvents' :key='event.id'>
-              <b>{{ event.startStr }}</b>
-              <i>{{ event.title }}</i>
+        <div class="mt-4">
+          <h3 class="font-bold">All Events ({{ currentEvents.length }})</h3>
+          <ul class="ml-4 list-disc">
+            <li v-for="event in currentEvents" :key="event.id">
+              <b>{{ event.startStr }}</b> <i>{{ event.title }}</i>
             </li>
           </ul>
         </div>
@@ -170,57 +167,55 @@ export default defineComponent({
     </div>
 
     <!-- Main Content Area -->
-    <div class="calendar-container">
-      <div class="full-calendar">
-        <button @click="$emit('close-calendar')" class="close-button">
-        &times;
-        </button>
-          <FullCalendar
-            class='demo-app-calendar'
-            :options='calendarOptions'
-          >
-            <template v-slot:eventContent='arg'> 
-              <b>{{ arg.timeText }}</b>  
-              <i>{{ arg.event.title }}</i>
-            </template>
-          </FullCalendar>
+    <div class="calendar-container mt-6 mx-auto max-w-7xl px-4">
+      <div class="full-calendar bg-white rounded-lg shadow-lg p-6">
+        <button @click="$emit('close-calendar')" class="close-button">&times;</button>
+        <FullCalendar
+          class="demo-app-calendar"
+          :options="calendarOptions"
+        >
+          <template v-slot:eventContent="arg">
+            <b>{{ arg.timeText }}</b> <i>{{ arg.event.title }}</i>
+          </template>
+        </FullCalendar>
       </div>
-      </div>
+    </div>
   </div>
-</template> 
+</template>
 
 <style scoped>
+.top-bar {
+  background-color: #0ea5e9;
+  color: white;
+}
+
 h2 {
   margin: 0;
   font-size: 20px;
 }
 
-ul {
-  margin: 0;
-  padding: 0 0 0 1.5em;
+h3 {
+  margin-top: 0;
 }
 
-.sidebar {
-  width: 16rem;
-  height: 100vh;
-  position: fixed;
-  top: 0;
-  left: 0;
-  padding-top: 4rem;
-  background-color: #1f2937;
-  transition: transform 0.3s ease-in-out; 
+ul {
+  margin: 0;
+  padding-left: 1.5rem;
 }
 
 .calendar-container {
+  flex-grow: 1;
+  max-width: 1100px;
+  width: 100%;
+}
+
+.full-calendar {
   position: relative;
   background-color: white;
   border-radius: 0.375rem;
   box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.1);
   padding: 1.5rem;
-  max-width: 30rem;
-  margin-top: 0.75rem;
-  flex-grow: 1;
-} 
+}
 
 .close-button {
   position: absolute;
@@ -235,19 +230,17 @@ ul {
   line-height: 1;
 }
 
-.fc {
-  max-width: 1100px;
-  margin: 0 auto;
-}
-
 .demo-app-calendar {
   font-size: 15px;
 }
 
 b {
-margin-right: 3px;
+  margin-right: 3px;
 }
 </style>
+
+
+
 
 
 
