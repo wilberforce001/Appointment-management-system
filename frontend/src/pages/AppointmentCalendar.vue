@@ -168,7 +168,7 @@ export default defineComponent({
 
     <!-- Main Content Area -->
     <div class="calendar-container mt-6 mx-auto max-w-7xl px-4">
-      <div class="full-calendar bg-white rounded-lg shadow-lg p-6">
+      <div class="full-calendar bg-white rounded-lg shadow-lg p-6 relative">
         <button @click="$emit('close-calendar')" class="close-button">&times;</button>
         <FullCalendar
           class="demo-app-calendar"
@@ -187,6 +187,7 @@ export default defineComponent({
 .top-bar {
   background-color: #0ea5e9;
   color: white;
+  padding-bottom: 1rem;
 }
 
 h2 {
@@ -207,14 +208,17 @@ ul {
   flex-grow: 1;
   max-width: 1100px;
   width: 100%;
+  margin-top: 2rem;
 }
-
 .full-calendar {
   position: relative;
   background-color: white;
   border-radius: 0.375rem;
   box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.1);
   padding: 1.5rem;
+  max-width: 80%;
+  margin: 0 auto;
+  overflow-x: auto;
 }
 
 .close-button {
@@ -231,11 +235,31 @@ ul {
 }
 
 .demo-app-calendar {
-  font-size: 15px;
+  font-size: 1rem;
+  line-height: 1.5;
 }
 
 b {
-  margin-right: 3px;
+  margin-right: 0.3rem;
+}
+
+@media (max-width: 768px) {
+  .top-bar h2 {
+    font-size: 1.5rem;
+  }
+
+  .full-calendar {
+    max-width: 95%;
+    padding: 1rem;
+  }
+
+  .demo-app-calendar {
+    font-size: 0.8rem;
+  }
+
+  .close-button {
+    font-size: 1.25rem;
+  }
 }
 </style>
 
