@@ -265,10 +265,14 @@ export default {
           </div>
         </div>
 
-      <!-- Conditionally render the calendar -->
-      <div v-if="isCalendarOpen" class="w-full flex justify-center mt-6">
-        <AppointmentCalendar @close-calendar="toggleCalendar" /> 
-      </div> 
+      <!-- Appointment Calendar -->
+      <transition name="fade">
+        <div v-if="isCalendarOpen" class="fixed overflow-y-auto max-h-[80vh] inset-0 flex justify-center items-center bg-gray-900 bg-opacity-75">
+          <div class="w-full max-w-screen-md h-3/4 max-h-screen bg-white rounded-lg shadow-lg p-4 relative">
+            <AppointmentCalendar @close-calendar="toggleCalendar" /> 
+          </div>
+        </div>
+      </transition>
 
       <!-- Sidebar Toggle Button -->
       <button
