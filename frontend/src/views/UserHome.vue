@@ -13,6 +13,9 @@
     </div>
     <router-view class="mt-8"></router-view>
   </div>
+  <footer>
+    <p>&copy; Kipyegon Kenduiywo W.</P>
+  </footer>
 </template>
 
 <script>
@@ -41,5 +44,15 @@ export default {
 .drop-in {
   transform: translateY(-400px); /* End in the original position */
   opacity: 0;
+}
+
+footer {
+  text-align: center;
+  padding: 5px;
+  background-color: #f1f1f1;
+  color: #333;
+  position: fixed;
+  width: 100%;
+  bottom: 0;
 }
 </style>
