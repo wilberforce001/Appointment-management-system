@@ -1,4 +1,4 @@
-<script>
+<script> 
 import ApiService from '../services/ApiService.js';
 import AppointmentCalendar from './AppointmentCalendar.vue';
 import mitt from 'mitt';
@@ -14,6 +14,8 @@ export default {
         date: '',
       },
       appointments: [],
+      isLoading: false,
+      pollingInterval: 5000,
       selectedAppointment: null,
       showRescheduleModal: false,
       rescheduleDate: '',
@@ -63,6 +65,7 @@ export default {
       }
     },
     async fetchAppointments() {
+      this.isLoading = true;
       try {
         const token = localStorage.getItem('token');
         if (!token) {
@@ -75,6 +78,8 @@ export default {
 
       } catch (error) {
         console.error('Fetch appointments failed:', error.response ? error.response.data : error.message);
+      } finally {
+        this.isLoading = false;
       }
     },
     async cancelAppointment(appointmentId) {
@@ -140,6 +145,10 @@ export default {
       // Fetch appointments on component mount
       this.fetchAppointments();
 
+      this.interval = setInterval(() => {
+        this.fetchAppointments();
+      }, this.pollingInterval);
+
       // Listen to the 'appointment-updated' event
       this.emitter.on('appointment-updated', () => {
         this.fetchAppointments();
@@ -188,8 +197,8 @@ export default {
       }
     },
     beforeDestroy() {
-      this.$root.$off('appointment-updated', this.updateAppointment);
-    }
+      // Clear interval when component is destroyed
+      clearInterval(this.interval);    }
   },
 }; 
 </script>

@@ -19,14 +19,14 @@ export const updateAppointmentStatus = async (req, res) => {
   } 
 
   try {
-    const appointment = await Appointment.findById(id);
+    const appointment = await Appointment.findById(req.params.id);
     if (!appointment) {
       return res.status(404).json({ message: 'Appointment not found' });
     }
 
-    appointment.status = status;
-    await appointment.save();
-    res.status(200).json(appointment);
+    appointment.status = req.body.status;
+    const updatedAppointment = await appointment.save();
+    res.status(200).json(updatedAppointment);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
