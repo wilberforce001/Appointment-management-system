@@ -3,11 +3,13 @@ import { useRouter } from 'vue-router';
 import { ref, onMounted, onUnmounted, watch } from 'vue';
 import ApiService from '../services/ApiService.js';
 import AppointmentCalendar from './AppointmentCalendar.vue';
+import mitt from 'mitt'; 
 
 export default {
   components: { AppointmentCalendar },
   name: 'AdminDashboard',
   setup() {
+    const emitter = mitt();
     const router = useRouter();
     const isLoading = ref(false);
     const appointments = ref([]);
@@ -66,16 +68,31 @@ export default {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         });
 
-        if (response.status === 200) {
-          successMessage.value = `Appointment ${status} successfully`;
-          await fetchAppointments();
-          selectedAppointment.value = null;
-        }
-      } catch (error) {
-        errorMessage.value = 'Failed to update appointment status. Please try again.';
-      } finally {
-        isLoading.value = false;
+            console.log(response); // Log the response to check status and data
+
+          if (response.status === 200) {
+            successMessage.value = `Appointment ${status} successfully`;
+            await fetchAppointments();
+            selectedAppointment.value = null;
+
+            // Assuming response.data contains the updated appointment info
+            const updatedAppointmentData = response.data;
+
+            // Emit an event to update the user's view
+            emitter.emit('appointment-updated', updatedAppointmentData);
+          }
+        } catch (error) {
+          console.error(error); // Log the error to understand the issue
+          errorMessage.value = 'Failed to update appointment status. Please try again.';
+        } finally {
+          isLoading.value = false;
       }
+    };
+    const confirmAppointment = (appointmentId) =>{
+      changeStatus(appointmentId, 'confirmed');
+    };
+    const cancelAppointment = (appointmentId) => {
+      changeStatus(appointmentId, 'canceled');
     };
 
     const selectAppointment = (appointment) => {
@@ -123,6 +140,8 @@ export default {
     });
 
     return {
+      confirmAppointment,
+      cancelAppointment,
       isLoading,
       appointments,
       newTimeSlot,
@@ -210,7 +229,7 @@ export default {
             <p><strong>End Time:</strong> {{ selectedAppointment.endTime }}</p>
             <p><strong>Description:</strong> {{ selectedAppointment.description }}</p>
             <div class="mt-4">
-              <button @click="changeStatus(selectedAppointment._id, 'completed')" class="bg-green-500 text-white p-2 rounded border border-green-700">
+              <button @click="changeStatus(selectedAppointment._id, 'confirmed')" class="bg-green-500 text-white p-2 rounded border border-green-700">
                 Confirmed
               </button>
               <button @click="changeStatus(selectedAppointment._id, 'canceled')" class="bg-red-500 text-white p-2 rounded border border-red-700 ml-4">

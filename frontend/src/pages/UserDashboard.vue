@@ -1,6 +1,7 @@
 <script>
 import ApiService from '../services/ApiService.js';
 import AppointmentCalendar from './AppointmentCalendar.vue';
+import mitt from 'mitt';
 
 export default {
   components: { AppointmentCalendar },
@@ -24,6 +25,7 @@ export default {
       isCalendarOpen: false,
       successMessage: '',
       errorMessage: '',
+      emitter: mitt(),
     };
   },
   computed: {
@@ -42,6 +44,10 @@ export default {
   },
   async created() {
     await this.fetchAppointments();
+    this.emitter.on('appointment-updated', this.updateAppointment);
+  },
+  beforeUnmount() {
+    this.emitter.off('appointment-updated', this.updateAppointment);
   },
   methods: {
     async createAppointment() {
@@ -66,6 +72,7 @@ export default {
           headers: { Authorization: `Bearer ${token}`},
         });
         this.appointments = response.data;
+
       } catch (error) {
         console.error('Fetch appointments failed:', error.response ? error.response.data : error.message);
       }
@@ -115,6 +122,39 @@ export default {
         console.error('Reschedule appointment failed:', error.response ? error.response.data : error.message);
       }
     },
+    async changeStatus(appointmentId, status) {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await ApiService.updateAppointmentStatus(appointmentId, { status }, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (response.status === 200) {
+          this.emitter.emit('appointment-updated', response.data); // Emit the event with updated appointment data
+        }
+      } catch (error) {
+        console.error('Failed to update appointment status:', error.response ? error.response.data : error.message);
+      }
+    },
+    mounted() {
+      // Fetch appointments on component mount
+      this.fetchAppointments();
+
+      // Listen to the 'appointment-updated' event
+      this.emitter.on('appointment-updated', () => {
+        this.fetchAppointments();
+      }); 
+    },
+    updateAppointment(updatedAppointment) {
+      const index = this.appointments.findIndex(appointment => appointment._id === updatedAppointment._id)
+      if (index !== -1) {
+        this.appointments.splice(index, 1, updatedAppointment);
+      }
+      if (this.selectedAppointment && this.selectedAppointment._id === updatedAppointment._id) {
+        this.selectedAppointment = updatedAppointment;
+      }
+    },
+
     openRescheduleModal() {
       this.rescheduleAppointmentData.id = this.selectedAppointment._id;
       this.rescheduleAppointmentData.date = this.selectedAppointment.date;
@@ -146,9 +186,12 @@ export default {
       } else {
         next();
       }
+    },
+    beforeDestroy() {
+      this.$root.$off('appointment-updated', this.updateAppointment);
     }
   },
-};
+}; 
 </script>
 
 <template>
