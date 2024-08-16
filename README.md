@@ -2,6 +2,8 @@
 **A software that can be used by companies and service providers to streamline their service appointments**  
 
 The Appointment Management System is a web application designed to help users schedule, manage, and keep track of their appointments. This project features user authentication, appointment creation, and appointment listing functionalities. It is built using Node.js and Vue.js, with a MongoDB database for data storage.
+Below is a YouTube link where I show case the functionality of the web application. 
+[![watch the video](https://youtu.be/EjZSwKkf8Y0)]
 
 **Features**  
 **User Authentication:** Secure login and registration for users  
